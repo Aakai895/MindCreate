@@ -45,7 +45,7 @@ export default function EditProfileScreen({ navigation }) {
           <Ionicons name="arrow-back" size={28} color="#a33" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Editar Perfil</Text>
-        <View style={{ width: 28 }} /> {/* Placeholder para centralizar */}
+        <View style={{ width: 28 }} />
       </View>
 
       <TouchableOpacity onPress={pickImage}>
