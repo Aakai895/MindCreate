@@ -16,6 +16,9 @@ export default function Assinar({navigation}) {
 
 
   return <SafeAreaView style={styles.container}> 
+  <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={28} color="#a33" />
+          </TouchableOpacity>
     <View style={styles.card}>
       <View style={styles.textoHeader}>
         <Text style={styles.textoTitle}>MENSAL CREATOR</Text>
