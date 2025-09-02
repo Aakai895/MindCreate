@@ -120,6 +120,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14,
     fontWeight: "500",
-    padding: 8,
+    margin: 10,
   },
 });
