@@ -16,7 +16,7 @@ export default function InicialScreen({ navigation }) {
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOwH4dmberk7y0YX9X9hBgokmG2UFNstAStA&s'
   );
 
-  const title = 'Receita de Abelha Simples com Asas e /n Duas Listras Pretas';
+  const title = 'Receita de Abelha Simples com Asas e Duas Listras Pretas';
   const price = 'R$ 10,00';
   const description =
     'Receita natural feita com ingredientes selecionados. Ideal para quem busca um produto artesanal e autêntico. Sem conservantes e perfeita para todas as ocasiões.';

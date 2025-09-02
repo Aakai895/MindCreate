@@ -13,6 +13,9 @@ export default function PixScreen() {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={28} color="#a33" />
+        </TouchableOpacity>
       <Text style={styles.title}>QR CODE</Text>
 
       <Image

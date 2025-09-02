@@ -5,6 +5,9 @@ export default function Sel3() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.card}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={28} color="#a33" />
+        </TouchableOpacity>
         <View style={styles.header}>
           <Text style={styles.title}>ANUAL CREATOR+</Text>
           <Text style={styles.price}>R$480 <Text style={styles.discount}>-20%</Text></Text>

@@ -9,6 +9,9 @@ export default function CartaoCreditoScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={28} color="#a33" />
+        </TouchableOpacity>
       <View style={styles.card}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View style={styles.logoMastercard} />
