@@ -11,9 +11,11 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
-
-import moment from 'moment';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
+dayjs.extend(utc);
 
 export default function Projeto({ navigation }) {
   const [image, setImage] = useState(
@@ -25,12 +27,10 @@ export default function Projeto({ navigation }) {
   const [iniciado, setIniciado] = useState(false);
   const [carreiraNum, setCarreira] = useState(1);
 
-  // Função para incrementar carreira
   const carreiraN = () => {
     setCarreira(carreiraNum + 1);
   };
 
-  // Cronômetro
   useEffect(() => {
     let interval;
     if (iniciado) {
@@ -48,7 +48,6 @@ export default function Projeto({ navigation }) {
     setIniciado(false);
   };
 
-  // Image picker
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -90,7 +89,7 @@ export default function Projeto({ navigation }) {
           <Text style={styles.sectionTitle}>HORAS</Text>
           <View style={styles.timeBox}>
             <Text style={styles.time}>
-              {moment.utc(tempoDecorrido * 1000).format('HH:mm:ss')}
+              {dayjs.utc(tempoDecorrido * 1000).format('HH:mm:ss')}
             </Text>
           </View>
 
@@ -215,7 +214,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: 'bold',
     color: '#8B0000',
-    fontVariant: ['tabular-nums'], // para números alinhados
+    fontVariant: ['tabular-nums'],
   },
   playerButtons: {
     flexDirection: 'row',
