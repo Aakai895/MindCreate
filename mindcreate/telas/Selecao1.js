@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default function Sel1({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={() => navigation.goBack('Assinar')}>
                 <Ionicons name="arrow-back" size={28} color="#a33" />
               </TouchableOpacity>
       <View style={styles.card}>
