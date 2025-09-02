@@ -10,22 +10,27 @@ import {
   Platform,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { Ionicons } from '@expo/vector-icons';
 
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default function Projeto({ navigation }) {
-  const [image, setImage] = useState('https://thumb.ac-illust.com/b1/b170870007dfa419295d949814474ab2_t.jpeg');
-  const nomeP = useState('Boneca Fofa');
+  const [image, setImage] = useState(
+    'https://thumb.ac-illust.com/b1/b170870007dfa419295d949814474ab2_t.jpeg'
+  );
+  const [nomeP] = useState('Boneca Fofa');
   const [notes, setNotes] = useState('');
   const [tempoDecorrido, setTempoDecorrido] = useState(0);
   const [iniciado, setIniciado] = useState(false);
   const [carreiraNum, setCarreira] = useState(1);
-  //carreira func
+
+  // Função para incrementar carreira
   const carreiraN = () => {
     setCarreira(carreiraNum + 1);
   };
-  //cronometro func
+
+  // Cronômetro
   useEffect(() => {
     let interval;
     if (iniciado) {
@@ -42,10 +47,11 @@ export default function Projeto({ navigation }) {
     setTempoDecorrido(0);
     setIniciado(false);
   };
-  //image picker
+
+  // Image picker
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -58,51 +64,52 @@ export default function Projeto({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.cart}
+            onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={30} color="#C14D34" />
+          </TouchableOpacity>
+        </View>
+      <View style={styles.tit}>
         <Text style={styles.title}>{nomeP}</Text>
-        {/* Você pode adicionar um ícone de coração aqui */}
-      </View>
-      <View>
-        <TouchableOpacity onPress={pickImage}>
-          <Image style={styles.image} source={{ uri: image }} />
-        </TouchableOpacity>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>CARREIRA</Text>
-        <Text style={styles.sectionTitle}>HORAS</Text>
-      </View>
+      <TouchableOpacity onPress={pickImage} activeOpacity={0.8}>
+        <Image style={styles.image} source={{ uri: image }} />
+      </TouchableOpacity>
 
-      <View style={styles.sectionContent}>
-        <TouchableOpacity style={styles.careerBox} onPress={carreiraN}>
-          <View style={styles.carreCron}>
+      <View style={styles.infoRow}>
+        <View style={styles.careerContainer}>
+          <Text style={styles.sectionTitle}>CARREIRA</Text>
+          <TouchableOpacity style={styles.careerBox} onPress={carreiraN} activeOpacity={0.7}>
             <Text style={styles.careerNumber}>{carreiraNum}</Text>
-          </View>
-        </TouchableOpacity>
-        <View>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.timerContainer}>
+          <Text style={styles.sectionTitle}>HORAS</Text>
           <View style={styles.timeBox}>
             <Text style={styles.time}>
               {moment.utc(tempoDecorrido * 1000).format('HH:mm:ss')}
             </Text>
           </View>
+
           <View style={styles.playerButtons}>
-            <TouchableOpacity
-              onPress={iniciaCronometro}
-              style={styles.playerButton}>
+            <TouchableOpacity onPress={iniciaCronometro} style={styles.playerButton}>
               <Icon
                 name={iniciado ? 'pause' : 'play-arrow'}
                 size={30}
-                color="#8B0000"
+                color="#fff"
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={zerarCronometro}
-              style={styles.playerButton}>
-              <Icon name="stop" size={30} color="#8B0000" />
+            <TouchableOpacity onPress={zerarCronometro} style={[styles.playerButton, styles.stopButton]}>
+              <Icon name="stop" size={30} color="#fff" />
             </TouchableOpacity>
           </View>
         </View>
       </View>
-      <View>
+
+      <View style={styles.notesContainer}>
         <Text style={styles.sectionTitle}>ANOTAÇÕES</Text>
         <TextInput
           style={styles.notesInput}
@@ -110,13 +117,14 @@ export default function Projeto({ navigation }) {
           value={notes}
           onChangeText={setNotes}
           placeholder="Digite suas anotações aqui..."
+          placeholderTextColor="#999"
+          textAlignVertical="top"
         />
       </View>
-      <View style={styles.botaoFim}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Finalizar Projeto</Text>
-        </TouchableOpacity>
-      </View>
+
+      <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+        <Text style={styles.buttonText}>Finalizar Projeto</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -124,97 +132,144 @@ export default function Projeto({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#fff5e6',
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'android' ? 40 : 0,
   },
   header: {
+    marginTop: 10,
+    marginBottom: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#8B0000',
   },
   image: {
     width: '100%',
-    height: 150,
-    marginTop: 20,
-    borderRadius: 8,
+    height: 220,
+    borderRadius: 15,
+    marginBottom: 25,
+    backgroundColor: '#ddd',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  section: {
+  infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    margin: 10,
+    marginBottom: 25,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  sectionContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginRight: 20,
-    marginLeft: 20,
+  careerContainer: {
     alignItems: 'center',
+    flex: 1,
+    marginRight: 15,
   },
-  botaoFim: {},
   careerBox: {
+    marginTop: 10,
     backgroundColor: '#8B0000',
-    width: 60,
-    height: 60,
-    borderRadius: 12,
+    width: 80,
+    height: 80,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    
+    shadowColor: '#8B0000',
+    shadowOpacity: 0.5,
+    shadowOffset: { width: 0, height: 8 },
+    shadowRadius: 10,
+    elevation: 10,
   },
   careerNumber: {
-    fontSize: 24,
+    fontSize: 36,
     color: '#fff',
+    fontWeight: '900',
+  },
+  timerContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#8B0000',
   },
   timeBox: {
+    marginTop: 10,
     backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 10,
-    flexDirection: 'row', // Adiciona flexDirection row
-    justifyContent: 'center', // Adiciona justifyContent space-between
-    alignItems: 'center', // Adiciona alignItems center
+    width: '100%',
+    paddingVertical: 15,
+    borderRadius: 15,
+    alignItems: 'center',
+    shadowColor: '#8B0000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 6 },
+    shadowRadius: 12,
+    elevation: 6,
   },
   time: {
-    fontSize: 20,
+    fontSize: 26,
     fontWeight: 'bold',
+    color: '#8B0000',
+    fontVariant: ['tabular-nums'], // para números alinhados
+  },
+  playerButtons: {
+    flexDirection: 'row',
+    marginTop: 15,
+  },
+  playerButton: {
+    backgroundColor: '#8B0000',
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    marginHorizontal: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#8B0000',
+    shadowOpacity: 0.45,
+    shadowOffset: { width: 0, height: 7 },
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  stopButton: {
+    backgroundColor: '#B22222',
+  },
+  notesContainer: {
+    marginBottom: 25,
   },
   notesInput: {
     marginTop: 10,
     backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 10,
-    height: 100,
-    textAlignVertical: 'top',
+    borderRadius: 15,
+    padding: 15,
+    minHeight: 120,
+    fontSize: 16,
+    color: '#333',
+    shadowColor: '#8B0000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 5 },
+    shadowRadius: 10,
+    elevation: 6,
   },
   button: {
     backgroundColor: '#8B0000',
-    padding: 15,
-    borderRadius: 8,
+    paddingVertical: 16,
+    borderRadius: 15,
+    marginBottom: 25,
     alignItems: 'center',
-    marginTop: 20,
+    shadowColor: '#8B0000',
+    shadowOpacity: 0.4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowRadius: 12,
+    elevation: 10,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-  },
-  playerButtons: {
-    flexDirection: 'row',
-  },
-  playerButton: {
-   
-    backgroundColor: '#fff',
-    borderRadius: 2,
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  
   },
 });

@@ -3,6 +3,9 @@ import { Text, SafeAreaView, StyleSheet } from 'react-native';
 
 
 export default function Chatscreen(props) {
+    const excluirProj = (id) => {
+    setProjetos(projetos.filter((p) => p.id !== id));
+  };
   return (
     <SafeAreaView style={styles.container}>
    
@@ -16,6 +19,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#fff5e6',
     padding: 8,
+    
   },
 
 });

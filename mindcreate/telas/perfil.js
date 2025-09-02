@@ -1,99 +1,215 @@
+import React, { useRef, useState } from 'react';
 import {
+  View,
   Text,
   Image,
   StyleSheet,
   TouchableOpacity,
-  View,
-  SafeAreaView,
-  TextInput,
+  FlatList,
+  Dimensions,
 } from 'react-native';
-import React, { useState } from 'react';
-import * as ImagePicker from 'expo-image-picker';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function Profile({ navigation }) {
+const { width } = Dimensions.get('window');
 
+const profilePic =
+  'https://st2.depositphotos.com/1177254/8066/i/950/depositphotos_80665370-stock-photo-old-woman-crocheting-at-home.jpg';
+const beeImage = 'https://via.placeholder.com/150';
 
+export default function ProfileScreen({ navigation }) {
+  const [activeTab, setActiveTab] = useState(0); // 0 = grid, 1 = store
+  const flatListRef = useRef(null);
 
+  const feedImages = [
+    {
+      id: '1',
+      image:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOwH4dmberk7y0YX9X9hBgokmG2UFNstAStA&s',
+    },
+    {
+      id: '2',
+      image:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOwH4dmberk7y0YX9X9hBgokmG2UFNstAStA&s',
+    },
+    {
+      id: '3',
+      image:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOwH4dmberk7y0YX9X9hBgokmG2UFNstAStA&s',
+    },
+    {
+      id: '4',
+      image:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOwH4dmberk7y0YX9X9hBgokmG2UFNstAStA&s',
+    },
+  ];
 
+  const storeItems = [
+    {
+      id: '1',
+      title: 'Receita de Abelha Simples',
+      price: 'R$10,00',
+      image:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOwH4dmberk7y0YX9X9hBgokmG2UFNstAStA&s',
+    },
+    {
+      id: '2',
+      title: 'Receita Abelha com Flores',
+      price: 'R$15,00',
+      image:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOwH4dmberk7y0YX9X9hBgokmG2UFNstAStA&s',
+    },
+    {
+      id: '3',
+      title: 'Receita Abelha Porta-Chave',
+      price: 'R$12,00',
+      image:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOwH4dmberk7y0YX9X9hBgokmG2UFNstAStA&s',
+    },
+  ];
 
-
-  //nome usuário
-  const [nome, setNome] = useState('cheirosa_111');
-  const seguidores = useState('0');
-  const seguindo = useState('0');
-  //mudar imagem
-
-  const [image, setImage] = useState(
-    'https://cdn-icons-png.flaticon.com/512/3736/3736502.png'
+  const renderGrid = () => (
+    <FlatList
+      data={feedImages}
+      numColumns={3}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <Image source={{ uri: item.image }} style={styles.gridImage} />
+      )}
+      contentContainerStyle={{ paddingBottom: 70 }}
+    />
   );
-  
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
+
+  const renderStore = () => (
+    <FlatList
+      data={storeItems}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <View style={styles.listItem}>
+          <Image source={{ uri: item.image }} style={styles.listImage} />
+          <View style={{ flex: 1, marginLeft: 10 }}>
+            <Text style={styles.listTitle}>{item.title}</Text>
+            <Text style={styles.listPrice}>{item.price}</Text>
+          </View>
+        </View>
+      )}
+      contentContainerStyle={{ paddingBottom: 70 }}
+    />
+  );
+
+  // Quando mudar aba, faz scroll no FlatList horizontal
+  const changeTab = (index) => {
+    setActiveTab(index);
+    flatListRef.current.scrollToIndex({ index });
   };
 
-  
   return (
-    <SafeAreaView style={styles.main}>
-      <View style={styles.container}>
-        <View >
-          <TouchableOpacity onPress={pickImage}>
-            <Image
-              style={{
-              width: 100,
-              height: 100,
-              marginTop: 30,
-              borderRadius: 100,
-                }}
-              source={{ uri: image }}
-              />
-          </TouchableOpacity>
-          <Text style={styles.username}>@{nome}</Text>
+    <View style={styles.container}>
+      {/* Profile */}
+      <View style={styles.profileContainer}>
+        <Image source={{ uri: profilePic }} style={styles.profilePic} />
+        <View style={{ flex: 1, marginLeft: 15 }}>
+          <Text style={styles.profileName}>Dalva Figueira</Text>
+          <Text style={styles.profileUser}>@dalva.figueira</Text>
         </View>
-        <View style={styles.segcontainer}>
-            <Text style={styles.segText}>Seguidores:</Text>
-            <Text style={styles.segNumber}>{seguidores}</Text>
-          </View>
-        <View style={styles.segcontainer}>
-          <Text style={styles.segText}>Seguindo:</Text>
-          <Text style={styles.segNumber}>{seguidores}</Text>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => navigation.navigate('edit')}>
+          <Ionicons name="pencil" size={18} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Seguidores */}
+      <View style={styles.followContainer}>
+        <View style={styles.followBox}>
+          <Ionicons name="person" size={18} color="#000" />
+          <Text>1</Text>
+          <Text>Seguidores</Text>
+        </View>
+        <View style={styles.followBox}>
+          <Ionicons name="heart" size={18} color="#000" />
+          <Text>1</Text>
+          <Text>Seguindo</Text>
         </View>
       </View>
-    </SafeAreaView>
+      {/* Bottom Navigation */}
+      <View style={styles.bottomNav}>
+        <TouchableOpacity onPress={() => changeTab(0)}>
+          <Ionicons
+            name="grid-outline"
+            size={28}
+            color={activeTab === 0 ? '#a33' : '#555'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => changeTab(1)}>
+          <Ionicons
+            name="cart"
+            size={28}
+            color={activeTab === 1 ? '#a33' : '#555'}
+          />
+        </TouchableOpacity>
+      </View>
+      {/* Carrossel com grid e loja */}
+      <FlatList
+        ref={flatListRef}
+        data={[renderGrid(), renderStore()]}
+        horizontal
+        pagingEnabled
+        scrollEnabled={false}
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item }) => <View style={{ width: width }}>{item}</View>}
+        keyExtractor={(_, index) => index.toString()}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  main: {
-    flex: 1,
-    padding: 30,
-    backgroundColor: '#fff5e6',
-  },
-  container: {
-    margin: '1%',
+  container: { flex: 1, backgroundColor: '#f5e8da' },
+  profileContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    
-  },
-  username: {
-    margin: '2%',
-  },
-  segcontainer: {
-    margin: '3%',
-    justifyContent: 'center',
     alignItems: 'center',
+    padding: 15,
+    backgroundColor: '#f5e8da',
   },
-  segText: {
-    margin: '2%',
-    fontWeight: 'bold',
+  profilePic: { width: 100, height: 100, borderRadius: 100 },
+  profileName: { fontWeight: 'bold', fontSize: 16 },
+  profileUser: { color: '#555' },
+  editButton: {
+    backgroundColor: '#a33',
+    padding: 8,
+    borderRadius: 20,
   },
-
+  followContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+  },
+  followBox: { alignItems: 'center' },
+  gridImage: {
+    width: '30%',
+    aspectRatio: 1,
+    margin: '1.5%',
+    borderRadius: 3,
+  },
+  listItem: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    margin: 8,
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#a33',
+  },
+  listImage: { width: 160, height: 160, borderRadius: 8 },
+  listTitle: { fontSize: 14, fontWeight: 'bold' },
+  listPrice: { color: '#333', marginTop: 5 },
+  bottomNav: {
+    height: 60,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+    backgroundColor: '#f5e8da',
+  },
 });
