@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 
-export default function CartaoCreditoScreen() {
+export default function CartaoCreditoScreen({ navigation }) {
   const [numero, setNumero] = useState("");
   const [titular, setTitular] = useState("");
   const [cvv, setCvv] = useState("");

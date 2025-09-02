@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Alert } fro
 import * as Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function PixScreen() {
+export default function PixScreen({ navigation }) {
   const linkPix = "311fd178b8510f68udm%2Bfb=AliJpHaX5Jpdenkis...";
 
   const copyToClipboard = async () => {
