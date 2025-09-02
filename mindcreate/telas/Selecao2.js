@@ -1,13 +1,14 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function InicialScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={28} color="#a33" />
+              </TouchableOpacity>
       <View style={styles.card}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={28} color="#a33" />
-        </TouchableOpacity>
         <View style={styles.header}>
           <Text style={styles.title}>MENSAL CREATOR+</Text>
           <Text style={styles.price}>R$50</Text>
