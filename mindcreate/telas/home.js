@@ -16,7 +16,7 @@ export default function InicialScreen({ navigation }) {
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOwH4dmberk7y0YX9X9hBgokmG2UFNstAStA&s'
   );
 
-  const title = 'Receita de Abelha Simples com Asas e Duas Listras Pretas';
+  const title = 'Receita de Abelha Simples com Asas e\nDuas Listras Pretas';
 
   const [rating, setRating] = useState(0);
 
@@ -120,6 +120,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14,
     fontWeight: "500",
-    margin: 10,
   },
 });
