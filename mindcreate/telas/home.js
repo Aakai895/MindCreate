@@ -17,9 +17,6 @@ export default function InicialScreen({ navigation }) {
   );
 
   const title = 'Receita de Abelha Simples com Asas e Duas Listras Pretas';
-  const price = 'R$ 10,00';
-  const description =
-    'Receita natural feita com ingredientes selecionados. Ideal para quem busca um produto artesanal e autêntico. Sem conservantes e perfeita para todas as ocasiões.';
 
   const [rating, setRating] = useState(0);
 
@@ -28,7 +25,7 @@ export default function InicialScreen({ navigation }) {
     console.log('Nota dada:', value);
   };
   const handlePress = () => {
-    navigation.navigate('Projetos'); // Navega para a tela 'Projetos'
+    navigation.navigate('Projetos');
   };
   return (
     <SafeAreaView style={styles.main}>
@@ -123,5 +120,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14,
     fontWeight: "500",
+    padding: 8,
   },
 });
