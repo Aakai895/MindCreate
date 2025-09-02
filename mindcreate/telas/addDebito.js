@@ -10,7 +10,7 @@ export default function CartaoCreditoScreen({ navigation }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack("Pagar")} style={{right: 120,}}>
+      <TouchableOpacity onPress={() => navigation.goBack("Pagar")} style={{right: 140,}}>
           <Ionicons name="arrow-back" size={28} color="#a33" />
         </TouchableOpacity>
       <View style={styles.card}>
