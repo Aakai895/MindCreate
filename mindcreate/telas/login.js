@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { loginUser } from "../services/authService";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
-  const handleLogin = () => {
-    console.log('Dados do login:', { email, password });
-    navigation.navigate('Home');
-  };
+  async function handleLogin() {
+    try {
+      await loginUser(email, password);
+      navigation.navigate("Home");
+    } catch (error) {
+      console.log("Erro ao logar:", error.message);
+    }
+  }
 
   return (
     <SafeAreaView style={styles.background}>

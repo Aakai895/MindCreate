@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { registerUser } from "../services/authService";
 
 const CadastroScreen = () => {
   const  [nome, setNome] = useState('maria');
@@ -8,10 +9,14 @@ const CadastroScreen = () => {
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
-  const handleCadastro = () => {
-    console.log('Dados do cadastro:', { nome, email, password });
-    navigation.navigate('Home');
-  };
+  async function handleCadastro(){
+    try {
+      await registerUser(email, password);
+      console.log("Usuário registrado!");
+    } catch (error) {
+      console.log("Erro ao registrar:", error.message);
+    }
+  }
 
   const handleLoginPress = () => {
     navigation.navigate('Login');
