@@ -10,6 +10,7 @@ const CadastroScreen = () => {
 
   const handleCadastro = () => {
     console.log('Dados do cadastro:', { nome, email, password });
+    navigation.navigate('Home');
   };
 
   const handleLoginPress = () => {

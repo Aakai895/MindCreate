@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "907225952398",
+    "project_id": "mindc-f4718",
+    "storage_bucket": "mindc-f4718.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:907225952398:android:9de7e23f2490a5795ed9df",
+        "android_client_info": {
+          "package_name": "mindcreate.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8_GtLv8cO857Vb4eLoKmr7JAARQM9uDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

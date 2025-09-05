@@ -4,9 +4,11 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } fro
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation();
 
   const handleLogin = () => {
     console.log('Dados do login:', { email, password });
+    navigation.navigate('Home');
   };
 
   return (
