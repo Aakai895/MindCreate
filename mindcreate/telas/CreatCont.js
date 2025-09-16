@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { registerUser } from "../services/authService";
+import { registerUser } from "../firebase/authfirebase";
 
 const CadastroScreen = () => {
-  const  [nome, setNome] = useState('maria');
+  const  [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
   async function handleCadastro(){
     try {
-      await registerUser(email, password);
+      await registerUser(email, password, nome);
       console.log("Usuário registrado!");
     } catch (error) {
       console.log("Erro ao registrar:", error.message);
