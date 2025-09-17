@@ -22,7 +22,7 @@ export default function LoginScreen({ navigation }) {
 
     try {
       await loginUser(email, password);
-      navigation.navigate("Telainicial");
+      navigation.navigate("Rotas");
     } catch (error) {
       console.log("Erro ao logar:", error.message);
       Alert.alert("Erro no login", error.message);

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
+import { useApp } from '../context/authcontext';
 const { width } = Dimensions.get('window');
 
 const profilePic =
@@ -18,6 +18,7 @@ const beeImage = 'https://via.placeholder.com/150';
 
 export default function ProfileScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState(0); // 0 = grid, 1 = store
+  const {} = useContext(useApp)
   const flatListRef = useRef(null);
 
   const feedImages = [

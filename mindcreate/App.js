@@ -8,13 +8,13 @@ import {
   StatusBar,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator} from '@react-navigation/native-stack';
 import Login from './telas/login'
 import Cad from './telas/CreatCont';
 import Rotas from './telas/rotas';
 import Telainicial from './telas/home';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -47,15 +47,20 @@ export default function App() {
 
   return (
     <NavigationContainer>
+      <AppProvider>
+
+      
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Rotas" component={Rotas} />
-        <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Rotas" component={Rotas} />
+        
         
         <Stack.Screen name="Cadastro" component={Cad} />
         
-        <Stack.Screen name="Telainicial" component={Telainicial} />
+        {/* <Stack.Screen name="Telainicial" component={Telainicial} /> */}
         
       </Stack.Navigator>
+      </AppProvider>
     </NavigationContainer>
   );
 }
