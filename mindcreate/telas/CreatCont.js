@@ -4,22 +4,25 @@ import { useNavigation } from '@react-navigation/native';
 import { registerUser } from "../firebase/authfirebase";
 
 const CadastroScreen = () => {
-  const  [nome, setNome] = useState('');
+  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
-  async function handleCadastro(){
+  // Função para cadastro
+  async function handleCadastro() {
     try {
-      await registerUser(email, password, nome);
+      await registerUser(email, password, nome);  // Chama a função de registro
       console.log("Usuário registrado!");
+      navigation.navigate("Login");  // Navega para tela de login após sucesso
     } catch (error) {
-      console.log("Erro ao registrar:", error.message);
+      console.log("Erro ao registrar:", error.message);  // Exibe erro, se houver
     }
   }
 
+  // Função para ir para a tela de login
   const handleLoginPress = () => {
-    navigation.navigate('Login');
+    navigation.navigate('Login');  // Navega para tela de login
   };
 
   return (
@@ -32,13 +35,11 @@ const CadastroScreen = () => {
         <ScrollView contentContainerStyle={styles.contentContainer}>
           <Text style={styles.title}>Criar Conta</Text>
 
-          <TouchableOpacity style={styles.loginButton} onPress={handleLoginPress}>
-            <Text style={styles.loginButtonText}>Já possui uma conta? Log in aqui.</Text>
-          </TouchableOpacity>
+          
 
           <TextInput
             style={styles.input}
-            placeholder="username"
+            placeholder="Nome"
             value={nome}
             onChangeText={setNome}
           />
@@ -56,7 +57,9 @@ const CadastroScreen = () => {
             onChangeText={setPassword}
             secureTextEntry
           />
-
+          <TouchableOpacity style={styles.loginButton} onPress={handleLoginPress}>
+            <Text style={styles.loginButtonText}>Já possui uma conta? Log in aqui.</Text>
+          </TouchableOpacity>
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={handleCadastro}>
               <Text style={styles.buttonText}>Cadastrar</Text>
@@ -86,7 +89,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: 'bold',
     color: '#8B0000',
-    marginBottom: 2,
+    marginBottom: 20,
     marginTop: 50,
   },
   input: {

@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView
+} from 'react-native';
 import { loginUser } from "../firebase/authfirebase";
-import Cad from './CreatCont'
-const LoginScreen = ({navigation}) => {
+
+export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
 
   async function handleLogin() {
     try {
       await loginUser(email, password);
-      navigation.navigate("Home");
+      navigation.navigate("Home"); // Certifique-se de que "Home" está registrada no seu navigator
     } catch (error) {
       console.log("Erro ao logar:", error.message);
     }
@@ -36,8 +42,9 @@ const LoginScreen = ({navigation}) => {
           onChangeText={setPassword}
           secureTextEntry
         />
-        <TouchableOpacity onPress={() => navigation.navigate('Criar Conta')}>
-          <Text>Não tem conta? cadastre-se aqui.</Text>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
+          <Text>Não tem conta? Cadastre-se aqui.</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
@@ -46,7 +53,7 @@ const LoginScreen = ({navigation}) => {
       </View>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   background: {
@@ -94,5 +101,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-export default LoginScreen;
