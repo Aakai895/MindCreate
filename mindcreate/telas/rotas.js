@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 
-import InicialScreen from './home';
+import Telainicial from './home';
 import ComprasScreen from './compras';
 import Chatscreen from './chat';
 import Perfilscreen from './perfil';
@@ -56,7 +56,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="telainicial"
-        component={InicialScreen}
+        component={Telainicial}
         options={{
           tabBarLabel: '',
           tabBarIcon: ({ focused }) =>
@@ -87,7 +87,7 @@ function TabNavigator() {
 export default function Rotas() {
   return (
     <Drawer.Navigator
-      initialRouteName="Home"
+      initialRouteName="telainicial"
       screenOptions={{
         drawerStyle: { backgroundColor: '#c27464', width: 240 },
         drawerActiveTintColor: '#fff',
@@ -99,7 +99,7 @@ export default function Rotas() {
         headerTitleStyle: { fontSize: 20, fontWeight: 'bold' },
       }}>
       <Drawer.Screen
-        name="Home"
+        name="telainicial"
         component={TabNavigator}
         options={{
           drawerIcon: ({ color, size }) => (

@@ -5,7 +5,8 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView
+  SafeAreaView,
+  Alert
 } from 'react-native';
 import { loginUser } from "../firebase/authfirebase";
 
@@ -14,11 +15,17 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
 
   async function handleLogin() {
+    if (!email || !password) {
+      Alert.alert("Preencha email e senha");
+      return;
+    }
+
     try {
       await loginUser(email, password);
-      navigation.navigate("Home"); // Certifique-se de que "Home" está registrada no seu navigator
+      navigation.navigate("Telainicial");
     } catch (error) {
       console.log("Erro ao logar:", error.message);
+      Alert.alert("Erro no login", error.message);
     }
   }
 
@@ -89,12 +96,11 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '75%',
-    position: 'absolute',
-    bottom: 30,
     backgroundColor: '#000',
     borderRadius: 8,
     padding: 15,
     alignItems: 'center',
+    marginTop: 30,
   },
   buttonText: {
     color: '#fff',

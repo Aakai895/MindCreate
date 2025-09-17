@@ -12,6 +12,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from './telas/login'
 import Cad from './telas/CreatCont';
 import Rotas from './telas/rotas';
+import Telainicial from './telas/home';
 
 const Stack = createStackNavigator();
 
@@ -47,9 +48,12 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Rotas" component={Rotas} />
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Rotas" component={Rotas} />
+        
         <Stack.Screen name="Cadastro" component={Cad} />
+        
+        <Stack.Screen name="Telainicial" component={Telainicial} />
         
       </Stack.Navigator>
     </NavigationContainer>

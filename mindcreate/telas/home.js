@@ -1,4 +1,4 @@
-import {React, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   SafeAreaView,
@@ -8,9 +8,8 @@ import {
   Image,
 } from 'react-native';
 
-import Projetos from './projetos';
 
-export default function InicialScreen({ navigation }) {
+export default function Telainicial({ navigation }) {
   const proj = ['31 de Agosto'];
   const [image, setImage] = useState(
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOwH4dmberk7y0YX9X9hBgokmG2UFNstAStA&s'

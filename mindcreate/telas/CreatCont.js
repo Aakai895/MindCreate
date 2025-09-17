@@ -12,13 +12,15 @@ const CadastroScreen = () => {
   // Função para cadastro
   async function handleCadastro() {
     try {
-      await registerUser(email, password, nome);  // Chama a função de registro
+      await registerUser(email, password, nome);
       console.log("Usuário registrado!");
-      navigation.navigate("Login");  // Navega para tela de login após sucesso
+      navigation.navigate("Login"); // Só será chamado se tudo deu certo
     } catch (error) {
-      console.log("Erro ao registrar:", error.message);  // Exibe erro, se houver
+      console.log("Erro ao registrar:", error.message);
+      alert("Erro ao registrar: " + error.message); // mostra na tela
     }
   }
+  
 
   // Função para ir para a tela de login
   const handleLoginPress = () => {
