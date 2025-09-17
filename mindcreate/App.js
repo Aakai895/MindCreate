@@ -1,4 +1,3 @@
-// App.js
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -9,20 +8,25 @@ import {
   StatusBar,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Login from './telas/login'
+import Cad from './telas/CreatCont';
 import Rotas from './telas/rotas';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
-  const fadeAnim = useRef(new Animated.Value(1)).current; 
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     const timer = setTimeout(() => {
       Animated.timing(fadeAnim, {
         toValue: 0,
-        duration: 600, 
+        duration: 600,
         useNativeDriver: true,
       }).start(() => {
-        setShowSplash(false); 
+        setShowSplash(false);
       });
     }, 1800);
 
@@ -42,7 +46,12 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Rotas />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Rotas" component={Rotas} />
+        <Stack.Screen name="Cadastro" component={Cad} />
+        
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { loginUser } from "../firebase/authfirebase";
-
-const LoginScreen = () => {
+import Cad from './CreatCont'
+const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
+  
 
   async function handleLogin() {
     try {
@@ -36,6 +36,9 @@ const LoginScreen = () => {
           onChangeText={setPassword}
           secureTextEntry
         />
+        <TouchableOpacity onPress={() => navigation.navigate('Criar Conta')}>
+          <Text>Não tem conta? cadastre-se aqui.</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
