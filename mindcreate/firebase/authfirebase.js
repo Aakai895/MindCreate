@@ -1,4 +1,4 @@
-import { auth } from "../firebaseConfig";
+import { auth } from "../firebase/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 export async function registerUser(email, password) {

@@ -221,6 +221,7 @@ export default function Rotas() {
         component={Sel1}
         options={{
           drawerItemStyle: { display: 'none' },
+          headerShown: false,
         }}
       />
       <Drawer.Screen
@@ -228,6 +229,7 @@ export default function Rotas() {
         component={Sel2}
         options={{
           drawerItemStyle: { display: 'none' },
+          headerShown: false,
         }}
       />
       <Drawer.Screen
@@ -235,6 +237,7 @@ export default function Rotas() {
         component={Sel3}
         options={{
           drawerItemStyle: { display: 'none' },
+          headerShown: false,
         }}
       />
       <Drawer.Screen
@@ -242,6 +245,7 @@ export default function Rotas() {
         component={Cred}
         options={{
           drawerItemStyle: { display: 'none' },
+          headerShown: false,
         }}
       />
       <Drawer.Screen
@@ -249,6 +253,7 @@ export default function Rotas() {
         component={Deb}
         options={{
           drawerItemStyle: { display: 'none' },
+          headerShown: false,
         }}
       />
       <Drawer.Screen
@@ -256,6 +261,7 @@ export default function Rotas() {
         component={Pix}
         options={{
           drawerItemStyle: { display: 'none' },
+          headerShown: false,
         }}
       />
       <Drawer.Screen
@@ -265,6 +271,8 @@ export default function Rotas() {
           drawerIcon: ({ color, size }) => (
             <Ionicons name="pricetags-outline" size={size} color={color} />
           ),
+          drawerItemStyle: { display: 'none' },
+          headerShown: false,
         }}
       />
     </Drawer.Navigator>
