@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -9,16 +9,15 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useApp } from '../context/authcontext';
+import { useApp } from '../context/authcontext'; // assumindo que é hook customizado
 const { width } = Dimensions.get('window');
 
 const profilePic =
   'https://st2.depositphotos.com/1177254/8066/i/950/depositphotos_80665370-stock-photo-old-woman-crocheting-at-home.jpg';
-const beeImage = 'https://via.placeholder.com/150';
 
 export default function ProfileScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState(0); // 0 = grid, 1 = store
-  const {} = useContext(useApp)
+  const { usuario } = useApp(); // corrigido para usar hook customizado
   const flatListRef = useRef(null);
 
   const feedImages = [
@@ -97,10 +96,13 @@ export default function ProfileScreen({ navigation }) {
     />
   );
 
-  // Quando mudar aba, faz scroll no FlatList horizontal
+  const tabs = ['grid', 'store'];
+
   const changeTab = (index) => {
     setActiveTab(index);
-    flatListRef.current.scrollToIndex({ index });
+    if (flatListRef.current) {
+      flatListRef.current.scrollToIndex({ index });
+    }
   };
 
   return (
@@ -109,12 +111,13 @@ export default function ProfileScreen({ navigation }) {
       <View style={styles.profileContainer}>
         <Image source={{ uri: profilePic }} style={styles.profilePic} />
         <View style={{ flex: 1, marginLeft: 15 }}>
-          <Text style={styles.profileName}>Dalva Figueira</Text>
+          <Text style={styles.profileName}>{usuario.nome}</Text>
           <Text style={styles.profileUser}>@dalva.figueira</Text>
         </View>
         <TouchableOpacity
           style={styles.editButton}
-          onPress={() => navigation.navigate('edit')}>
+          onPress={() => navigation.navigate('edit')}
+        >
           <Ionicons name="pencil" size={18} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -132,6 +135,7 @@ export default function ProfileScreen({ navigation }) {
           <Text>Seguindo</Text>
         </View>
       </View>
+
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
         <TouchableOpacity onPress={() => changeTab(0)}>
@@ -149,16 +153,21 @@ export default function ProfileScreen({ navigation }) {
           />
         </TouchableOpacity>
       </View>
+
       {/* Carrossel com grid e loja */}
       <FlatList
         ref={flatListRef}
-        data={[renderGrid(), renderStore()]}
+        data={tabs}
         horizontal
         pagingEnabled
         scrollEnabled={false}
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => <View style={{ width: width }}>{item}</View>}
-        keyExtractor={(_, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={{ width: width, flex: 1 }}>
+            {item === 'grid' ? renderGrid() : renderStore()}
+          </View>
+        )}
+        keyExtractor={(item) => item}
       />
     </View>
   );

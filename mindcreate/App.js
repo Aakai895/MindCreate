@@ -13,6 +13,8 @@ import Login from './telas/login'
 import Cad from './telas/CreatCont';
 import Rotas from './telas/rotas';
 import Telainicial from './telas/home';
+import { AppProvider } from './context/authcontext';
+
 
 const Stack = createNativeStackNavigator();
 
