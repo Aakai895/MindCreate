@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator} from '@react-navigation/native-stack';
-import Login from './telas/login'
-import Cad from './telas/CreatCont';
+import Login from './telas/perfiluser/login'
+import Cad from './telas/perfiluser/CreatCont';
 import Rotas from './telas/rotas';
 import Telainicial from './telas/home';
 import { AppProvider } from './context/authcontext';
@@ -59,7 +59,6 @@ export default function App() {
         
         <Stack.Screen name="Cadastro" component={Cad} />
         
-        {/* <Stack.Screen name="Telainicial" component={Telainicial} /> */}
         
       </Stack.Navigator>
       </AppProvider>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { registerUser } from "../firebase/authfirebase";
+import { registerUser } from "../../firebase/authfirebase";
 
 const CadastroScreen = () => {
   const [nome, setNome] = useState('');

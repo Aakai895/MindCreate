@@ -39,7 +39,7 @@ export default function ComprasScreen({ navigation }) {
               <TouchableOpacity onPress={() => navigation.navigate('Produto')}>
                 <Image
                   style={styles.image}
-                  source={require('../assets/receitaabelha.webp')}
+                  source={require('../../assets/receitaabelha.webp')}
                 />
                 <Text style={styles.titprod}>
                   Receita de abelha simples...

@@ -1,98 +1,130 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged 
+  onAuthStateChanged,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../firebaseConfig'; // ajuste o caminho conforme seu projeto
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  doc,
+  getDoc,
+  setDoc,
+} from 'firebase/firestore';
+import { auth, db } from '../firebase/firebase';
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   const [usuario, setUsuario] = useState(null);
 
-  // Monitorar usuário logado automaticamente
+  // 🔄 Escuta login/deslog e busca dados do Firestore
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Busca dados no Firestore
-        const userDoc = await getDoc(doc(db, 'usuario', user.uid));
-        if (userDoc.exists()) {
-          setUsuario(userDoc.data());
+        const docRef = doc(db, 'usuario', user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setUsuario({ uid: user.uid, email: user.email, ...docSnap.data() });
         } else {
-          setUsuario(null);
-          console.warn('Usuário logado, mas dados não encontrados no Firestore');
+          // Se não tiver dados no Firestore, salva algo básico
+          await setDoc(docRef, {
+            uid: user.uid,
+            email: user.email,
+            criadoEm: new Date(),
+          });
+          setUsuario({ uid: user.uid, email: user.email });
         }
       } else {
         setUsuario(null);
       }
     });
 
-    // Cleanup no unmount
     return () => unsubscribe();
   }, []);
 
+  // 👤 Criação de conta
   async function registerUser(email, password, nome) {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-      const novoUsuario = {
-        uid: user.uid,
-        nome,
-        email,
-        criadoEm: new Date(),
-      };
+    // Salva no Firestore o perfil do usuário
+    await setDoc(doc(db, 'usuario', user.uid), {
+      uid: user.uid,
+      nome,
+      email,
+      criadoEm: new Date(),
+    });
 
-      await setDoc(doc(db, 'usuario', user.uid), novoUsuario);
-
-      setUsuario(novoUsuario); // atualiza estado global
-
-      console.log('Usuário registrado e salvo no Firestore:', novoUsuario);
-      return user;
-    } catch (error) {
-      console.error('Erro no registro:', error);
-      throw error;
-    }
+    // Atualiza o estado global
+    setUsuario({ uid: user.uid, nome, email });
+    return user;
   }
 
+  // 🔐 Login
   async function loginUser(email, password) {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-      // Busca dados no Firestore
-      const userDoc = await getDoc(doc(db, 'usuario', user.uid));
-      if (userDoc.exists()) {
-        setUsuario(userDoc.data());
-      } else {
-        setUsuario(null);
-        console.warn('Dados do usuário não encontrados no Firestore!');
-      }
+    // Busca dados do perfil no Firestore
+    const docRef = doc(db, 'usuario', user.uid);
+    const docSnap = await getDoc(docRef);
 
-      console.log('Login realizado:', user.uid);
-      return user;
-    } catch (error) {
-      console.error('Erro no login:', error);
-      throw error;
+    if (docSnap.exists()) {
+      setUsuario({ uid: user.uid, email: user.email, ...docSnap.data() });
+    } else {
+      setUsuario({ uid: user.uid, email: user.email });
     }
+
+    return user;
   }
 
+  // 🚪 Logout
   async function logoutUser() {
-    try {
-      await signOut(auth);
-      setUsuario(null);
-      console.log('Logout realizado com sucesso.');
-    } catch (error) {
-      console.error('Erro no logout:', error);
-      throw error;
-    }
+    await signOut(auth);
+    setUsuario(null);
+  }
+
+  // ➕ Adicionar projeto
+  async function addProjeto({ anotações, carreira, nomeP, tempodata }) {
+    if (!auth.currentUser) throw new Error('Usuário não autenticado');
+
+    return await addDoc(collection(db, 'projetos'), {
+      anotações,
+      carreira,
+      nomeP,
+      tempodata,
+      usuarioID: auth.currentUser.uid,
+    });
+  }
+
+  // 📄 Buscar projetos do usuário
+  async function getProjetosByUsuario() {
+    if (!auth.currentUser) throw new Error('Usuário não autenticado');
+
+    const projetosRef = collection(db, 'projetos');
+    const q = query(projetosRef, where('usuarioID', '==', auth.currentUser.uid));
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   }
 
   return (
-    <AppContext.Provider value={{ usuario, registerUser, loginUser, logoutUser }}>
+    <AppContext.Provider
+      value={{
+        usuario,
+        registerUser,
+        loginUser,
+        logoutUser,
+        addProjeto,
+        getProjetosByUsuario,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

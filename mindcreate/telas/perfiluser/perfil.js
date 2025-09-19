@@ -9,15 +9,14 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useApp } from '../context/authcontext'; // assumindo que é hook customizado
+import { useApp } from '../../context/authcontext'; 
 const { width } = Dimensions.get('window');
 
-const profilePic =
-  'https://st2.depositphotos.com/1177254/8066/i/950/depositphotos_80665370-stock-photo-old-woman-crocheting-at-home.jpg';
+const profilePic ={usuario.profileImageBase64};
 
 export default function ProfileScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState(0); // 0 = grid, 1 = store
-  const { usuario } = useApp(); // corrigido para usar hook customizado
+  const { usuario } = useApp(); 
   const flatListRef = useRef(null);
 
   const feedImages = [

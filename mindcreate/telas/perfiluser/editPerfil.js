@@ -8,34 +8,60 @@ import {
   Image,
   SafeAreaView,
 } from 'react-native';
+import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
+import { auth } from '../../firebase/firebase';
+import { updateUserProfile } from '../../firebase/firestore'; // ✅ Correto agora
 
-export default function EditProfileScreen({ navigation }) {
+export default function EditPerfil({ navigation }) {
   const [profileImage, setProfileImage] = useState(
     'https://st2.depositphotos.com/1177254/8066/i/950/depositphotos_80665370-stock-photo-old-woman-crocheting-at-home.jpg'
   );
+  const [profileImageBase64, setProfileImageBase64] = useState(null);
   const [name, setName] = useState('Dalva Figueira');
   const [username, setUsername] = useState('@dalva.figueira');
   const [bio, setBio] = useState('Apaixonada por crochê e receitas únicas!');
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     });
 
     if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
+      const uri = result.assets[0].uri;
+      setProfileImage(uri);
+      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
+      setProfileImageBase64(base64);
     }
-  };
 
-  const handleSave = () => {
-    // Aqui salvar no banco ou contexto
-    console.log('Perfil salvo:', { name, username, bio });
-    navigation.navigate('Perfil');
+    const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
+console.log('Imagem em base64:', base64.substring(0, 100)); // só os 100 primeiros caracteres
+setProfileImageBase64(base64);
+
+  };
+  
+
+  const handleSave = async () => {
+    try {
+      const uid = auth.currentUser?.uid;
+      if (!uid) throw new Error('Usuário não autenticado');
+
+      await updateUserProfile({
+        uid,
+        nome: name,
+        bio,
+        profileImageBase64,
+      });
+
+      console.log('Perfil salvo no Firestore!');
+      navigation.navigate('Perfil');
+    } catch (error) {
+      console.error('Erro ao salvar perfil:', error);
+    }
   };
 
   return (

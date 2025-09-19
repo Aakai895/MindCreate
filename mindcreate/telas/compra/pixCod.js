@@ -19,7 +19,7 @@ export default function PixScreen({ navigation }) {
       <Text style={styles.title}>QR CODE</Text>
 
       <Image
-        source={require("../assets/CodePix.png")}
+        source={require("../../assets/CodePix.png")}
         style={styles.qrcode}
       />
 

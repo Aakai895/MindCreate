@@ -106,7 +106,7 @@ export default function Projetoscreen({ navigation }) {
         <Image
           source={{ uri: item.imagem }}
           style={styles.listImage}
-          defaultSource={require('../assets/no-image.jpg')}
+          defaultSource={require('../../assets/no-image.jpg')}
         />
         <Text style={styles.nomeProjeto} numberOfLines={1}>
           {item.nomeP}
@@ -233,7 +233,7 @@ export default function Projetoscreen({ navigation }) {
             <Image
               style={styles.image}
               source={
-                image ? { uri: image } : require('../assets/no-image.jpg')
+                image ? { uri: image } : require('../../assets/no-image.jpg')
               }
             />
           </TouchableOpacity>

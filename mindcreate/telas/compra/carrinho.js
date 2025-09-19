@@ -31,7 +31,7 @@ export default function Carrinho({navigation}) {
       <Image
         source={{ uri: item.imagem }}
         style={styles.listImage}
-        defaultSource={require('../assets/no-image.jpg')}
+        defaultSource={require('../../assets/no-image.jpg')}
       />
       <View style={styles.itemInfo}>
         <Text style={styles.itemNome}>{item.nome}</Text>
