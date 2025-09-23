@@ -6,15 +6,14 @@ import {
   StyleSheet,
   Animated,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator} from '@react-navigation/native-stack';
-import Login from './telas/perfiluser/login'
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Login from './telas/perfiluser/login';
 import Cad from './telas/perfiluser/CreatCont';
 import Rotas from './telas/rotas';
-import Telainicial from './telas/home';
-import { AppProvider } from './context/authcontext';
-
+import { AppProvider, useApp } from './context/authcontext';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,21 +47,38 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <AppProvider>
+    <AppProvider>
+      <NavigationContainer>
+        <AppWithNavigation />
+      </NavigationContainer>
+    </AppProvider>
+  );
+}
 
-      
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Rotas" component={Rotas} />
-        
-        
-        <Stack.Screen name="Cadastro" component={Cad} />
-        
-        
-      </Stack.Navigator>
-      </AppProvider>
-    </NavigationContainer>
+function AppWithNavigation() {
+  const { usuario, loading } = useApp(); // 🔄 contexto
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#964534" />
+      </View>
+    );
+  }
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {usuario ? (
+        <>
+          <Stack.Screen name="Rotas" component={Rotas} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Cadastro" component={Cad} />
+        </>
+      )}
+    </Stack.Navigator>
   );
 }
 
@@ -87,5 +103,10 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: '#fff',
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

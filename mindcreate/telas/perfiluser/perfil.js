@@ -12,11 +12,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../../context/authcontext'; 
 const { width } = Dimensions.get('window');
 
-const profilePic ={usuario.profileImageBase64};
 
 export default function ProfileScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState(0); // 0 = grid, 1 = store
   const { usuario } = useApp(); 
+  const profilePic = usuario?.imagem || 'https://via.placeholder.com/100';
+
+
+
   const flatListRef = useRef(null);
 
   const feedImages = [
@@ -108,11 +111,17 @@ export default function ProfileScreen({ navigation }) {
     <View style={styles.container}>
       {/* Profile */}
       <View style={styles.profileContainer}>
-        <Image source={{ uri: profilePic }} style={styles.profilePic} />
+      <Image
+  source={{ uri: profilePic.startsWith('data:image') ? profilePic : `data:image/png;base64,${profilePic}` }}
+  style={styles.profilePic}
+/>
+
         <View style={{ flex: 1, marginLeft: 15 }}>
           <Text style={styles.profileName}>{usuario.nome}</Text>
-          <Text style={styles.profileUser}>@dalva.figueira</Text>
+          <Text style={styles.profileUser}>@{usuario.nome}</Text>
+          <Text style={styles.profileName}>{usuario.bio}</Text>
         </View>
+        
         <TouchableOpacity
           style={styles.editButton}
           onPress={() => navigation.navigate('edit')}

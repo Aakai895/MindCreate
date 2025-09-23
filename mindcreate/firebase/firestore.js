@@ -49,8 +49,9 @@ export async function updateUserProfile({
     {
       nome,
       bio,
-      profileImageBase64,
+      imagem: profileImageBase64, 
     },
-    { merge: true } // garante que só atualiza os campos enviados
+    { merge: true }
   );
 }
+

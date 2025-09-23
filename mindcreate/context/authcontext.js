@@ -12,8 +12,8 @@ import {
   query,
   where,
   doc,
-  getDoc,
   setDoc,
+  onSnapshot,
 } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebase';
 
@@ -22,47 +22,56 @@ const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [usuario, setUsuario] = useState(null);
 
-  // 🔄 Escuta login/deslog e busca dados do Firestore
+  // 🔄 Escuta login/logout + sincroniza Firestore com onSnapshot
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    let unsubscribeSnapshot = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const docRef = doc(db, 'usuario', user.uid);
-        const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-          setUsuario({ uid: user.uid, email: user.email, ...docSnap.data() });
-        } else {
-          // Se não tiver dados no Firestore, salva algo básico
-          await setDoc(docRef, {
-            uid: user.uid,
-            email: user.email,
-            criadoEm: new Date(),
-          });
-          setUsuario({ uid: user.uid, email: user.email });
-        }
+        // 👂 Escuta em tempo real os dados do usuário no Firestore
+        unsubscribeSnapshot = onSnapshot(docRef, async (docSnap) => {
+          if (docSnap.exists()) {
+            setUsuario({ uid: user.uid, email: user.email, ...docSnap.data() });
+          } else {
+            // Cria dados iniciais se não existir
+            const novoUsuario = {
+              uid: user.uid,
+              email: user.email,
+              criadoEm: new Date(),
+            };
+            await setDoc(docRef, novoUsuario);
+            setUsuario(novoUsuario);
+          }
+        });
       } else {
         setUsuario(null);
+        if (unsubscribeSnapshot) unsubscribeSnapshot();
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
   }, []);
 
-  // 👤 Criação de conta
+  // 🧾 Registrar novo usuário
   async function registerUser(email, password, nome) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Salva no Firestore o perfil do usuário
-    await setDoc(doc(db, 'usuario', user.uid), {
+    const novoUsuario = {
       uid: user.uid,
       nome,
       email,
       criadoEm: new Date(),
-    });
+    };
 
-    // Atualiza o estado global
-    setUsuario({ uid: user.uid, nome, email });
+    await setDoc(doc(db, 'usuario', user.uid), novoUsuario);
+    setUsuario(novoUsuario);
+
     return user;
   }
 
@@ -71,16 +80,7 @@ export const AppProvider = ({ children }) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Busca dados do perfil no Firestore
-    const docRef = doc(db, 'usuario', user.uid);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      setUsuario({ uid: user.uid, email: user.email, ...docSnap.data() });
-    } else {
-      setUsuario({ uid: user.uid, email: user.email });
-    }
-
+    // onSnapshot já cuida de atualizar o `usuario`
     return user;
   }
 
@@ -118,6 +118,7 @@ export const AppProvider = ({ children }) => {
     <AppContext.Provider
       value={{
         usuario,
+        setUsuario, // caso precise atualizar manualmente
         registerUser,
         loginUser,
         logoutUser,

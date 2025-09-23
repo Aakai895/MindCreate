@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,54 +8,61 @@ import {
   Image,
   SafeAreaView,
 } from 'react-native';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../../firebase/firebase';
-import { updateUserProfile } from '../../firebase/firestore'; // ✅ Correto agora
+import { updateUserProfile } from '../../firebase/firestore';
+import { useApp } from '../../context/authcontext';
 
 export default function EditPerfil({ navigation }) {
-  const [profileImage, setProfileImage] = useState(
-    'https://st2.depositphotos.com/1177254/8066/i/950/depositphotos_80665370-stock-photo-old-woman-crocheting-at-home.jpg'
-  );
-  const [profileImageBase64, setProfileImageBase64] = useState(null);
-  const [name, setName] = useState('Dalva Figueira');
-  const [username, setUsername] = useState('@dalva.figueira');
-  const [bio, setBio] = useState('Apaixonada por crochê e receitas únicas!');
+  const { usuario } = useApp();
+
+  const [nome, setNome] = useState(usuario?.nome || '');
+  const [username, setUsername] = useState('');
+  const [bio, setBio] = useState(usuario?.bio || '');
+  const [profileImageBase64, setProfileImageBase64] = useState(usuario?.imagem || '');
+
+  useEffect(() => {
+    setNome(usuario?.nome || '');
+    setBio(usuario?.bio || '');
+  }, [usuario]);
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
 
-    if (!result.canceled) {
-      const uri = result.assets[0].uri;
-      setProfileImage(uri);
-      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
-      setProfileImageBase64(base64);
+      if (!result.canceled) {
+        const uri = result.assets[0].uri;
+        const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
+        setProfileImageBase64(base64);
+      }
+    } catch (error) {
+      console.error('Erro ao escolher a imagem:', error);
     }
-
-    const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
-console.log('Imagem em base64:', base64.substring(0, 100)); // só os 100 primeiros caracteres
-setProfileImageBase64(base64);
-
   };
-  
 
   const handleSave = async () => {
     try {
       const uid = auth.currentUser?.uid;
       if (!uid) throw new Error('Usuário não autenticado');
 
-      await updateUserProfile({
+      const updateData = {
         uid,
-        nome: name,
+        nome,
         bio,
-        profileImageBase64,
-      });
+      };
+
+      if (profileImageBase64) {
+        updateData.profileImageBase64 = profileImageBase64;
+      }
+
+      await updateUserProfile(updateData);
 
       console.log('Perfil salvo no Firestore!');
       navigation.navigate('Perfil');
@@ -75,24 +82,25 @@ setProfileImageBase64(base64);
       </View>
 
       <TouchableOpacity onPress={pickImage}>
-        <Image source={{ uri: profileImage }} style={styles.avatar} />
+        <Image
+          source={{
+            uri: profileImageBase64
+              ? `data:image/jpeg;base64,${profileImageBase64}`
+              : usuario?.profileImageBase64
+              ? `data:image/jpeg;base64,${usuario.profileImageBase64}`
+              : 'https://via.placeholder.com/100',
+          }}
+          style={styles.avatar}
+        />
         <Text style={styles.editPhotoText}>Editar Foto</Text>
       </TouchableOpacity>
 
       <View style={styles.form}>
         <Text style={styles.label}>Nome</Text>
-        <TextInput
-          style={styles.input}
-          value={name}
-          onChangeText={setName}
-        />
+        <TextInput style={styles.input} value={nome} onChangeText={setNome} />
 
         <Text style={styles.label}>Usuário</Text>
-        <TextInput
-          style={styles.input}
-          value={username}
-          onChangeText={setUsername}
-        />
+        <TextInput style={styles.input} value={username} onChangeText={setUsername} />
 
         <Text style={styles.label}>Bio</Text>
         <TextInput
