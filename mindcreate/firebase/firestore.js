@@ -28,7 +28,7 @@ export async function addProjeto({
 
 // --- Função para buscar projetos de um usuário pelo id ---
 export async function getProjetosByUsuario(uid) {
-  const projetosRef = collection(db, 'projetos');
+  const projetosRef = collection(db, 'projeto');
   const q = query(projetosRef, where('usuarioID', '==', uid));
   const querySnapshot = await getDocs(q);
 
@@ -41,6 +41,7 @@ export async function updateUserProfile({
   nome,
   bio,
   profileImageBase64,
+  username,
 }) {
   const userDocRef = doc(db, 'usuario', uid);
 
@@ -49,7 +50,8 @@ export async function updateUserProfile({
     {
       nome,
       bio,
-      imagem: profileImageBase64, 
+      imagem: profileImageBase64,
+      username, 
     },
     { merge: true }
   );

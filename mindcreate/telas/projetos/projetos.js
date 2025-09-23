@@ -14,6 +14,8 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useApp } from '../../context/authcontext'; 
+
 
 export default function Projetoscreen({ navigation }) {
   const [image, setImage] = useState(null);
@@ -26,7 +28,8 @@ export default function Projetoscreen({ navigation }) {
   const [dataFormatada, setDataFormatada] = useState('');
   const [mostrardataPicker, setmostrardataPicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null); // data selecionada no filtro (yyyy-mm-dd) ou null para todos
-
+  const { usuario } = useApp(); 
+  
   const NUM_DIAS = 30;
 
   const getDiasFuturos = () => {

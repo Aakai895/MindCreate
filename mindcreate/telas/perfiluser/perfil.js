@@ -118,7 +118,7 @@ export default function ProfileScreen({ navigation }) {
 
         <View style={{ flex: 1, marginLeft: 15 }}>
           <Text style={styles.profileName}>{usuario.nome}</Text>
-          <Text style={styles.profileUser}>@{usuario.nome}</Text>
+          <Text style={styles.profileUser}>@{usuario.username}</Text>
           <Text style={styles.profileName}>{usuario.bio}</Text>
         </View>
         

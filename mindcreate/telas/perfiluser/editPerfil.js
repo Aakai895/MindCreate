@@ -49,28 +49,29 @@ export default function EditPerfil({ navigation }) {
 
   const handleSave = async () => {
     try {
-      const uid = auth.currentUser?.uid;
+      const uid = usuario?.uid;
       if (!uid) throw new Error('Usuário não autenticado');
-
+  
       const updateData = {
         uid,
         nome,
         bio,
+        username
       };
-
+  
       if (profileImageBase64) {
         updateData.profileImageBase64 = profileImageBase64;
       }
-
+  
       await updateUserProfile(updateData);
-
+  
       console.log('Perfil salvo no Firestore!');
       navigation.navigate('Perfil');
     } catch (error) {
       console.error('Erro ao salvar perfil:', error);
     }
   };
-
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
