@@ -28,6 +28,7 @@ import Cred from './compra/addCredito';
 import Deb from './compra/addDebito';
 import Pix from './compra/pixCod';
 import Precif from './projetos/precificar';
+import config from './perfiluser/config';
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -273,6 +274,15 @@ export default function Rotas() {
           ),
           drawerItemStyle: { display: 'none' },
           headerShown: false,
+        }}
+      />
+      <Drawer.Screen
+        name="Configuracao"
+        component={config}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="log-out-outline" size={size} color={color} />
+          ),
         }}
       />
     </Drawer.Navigator>

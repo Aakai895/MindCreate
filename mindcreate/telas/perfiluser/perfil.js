@@ -177,6 +177,8 @@ export default function ProfileScreen({ navigation }) {
         )}
         keyExtractor={(item) => item}
       />
+
+      
     </View>
   );
 }
