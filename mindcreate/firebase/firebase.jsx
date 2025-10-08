@@ -3,12 +3,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC8ca9w230uMoGZNdAOAh_Eet3pUGutm_I",
-  authDomain: "mindc-f4718.firebaseapp.com",
-  projectId: "mindc-f4718",
-  storageBucket: "mindc-f4718.firebasestorage.app",
-  messagingSenderId: "907225952398",
-  appId: "1:907225952398:web:bdffbf128e323d0f5ed9df"
+  apiKey: "AIzaSyBjqioidLSkoPzCTEcq_uMdXS7JMGJLqtM",
+  authDomain: "mindcreate-354c0.firebaseapp.com",
+  projectId: "mindcreate-354c0",
+  storageBucket: "mindcreate-354c0.firebasestorage.app",
+  messagingSenderId: "479588412875",
+  appId: "1:479588412875:web:0368bff305a85f43885a4e"
 };
 
 const app = initializeApp(firebaseConfig);
