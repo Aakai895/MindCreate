@@ -5,6 +5,7 @@ import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyBjqioidLSkoPzCTEcq_uMdXS7JMGJLqtM",
   authDomain: "mindcreate-354c0.firebaseapp.com",
+  databaseURL: "https://mindcreate-354c0-default-rtdb.firebaseio.com",
   projectId: "mindcreate-354c0",
   storageBucket: "mindcreate-354c0.firebasestorage.app",
   messagingSenderId: "479588412875",
@@ -15,4 +16,3 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-

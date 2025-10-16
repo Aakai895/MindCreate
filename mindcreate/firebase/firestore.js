@@ -11,18 +11,16 @@ import {
 
 // --- Função para adicionar um projeto para um usuário ---
 export async function addProjeto({
-  anotações,
-  carreira,
   nomeP,
-  tempodata,
+  dataEntrega,
   uid,
+  image,
 }) {
   return await addDoc(collection(db, 'projetos'), {
-    anotações,
-    carreira,
     nomeP,
-    tempodata,
+    dataEntrega,
     uid,
+    image,
   });
 }
 

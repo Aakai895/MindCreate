@@ -10,53 +10,48 @@ import {
   FlatList,
   TextInput,
   ScrollView,
-  Platform,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { addProjeto } from '../../firebase/firestore';
+// Supondo que você tenha um contexto para usuário, importe aqui
 import { useApp } from '../../context/authcontext'; 
 
-
 export default function Projetoscreen({ navigation }) {
+  const { usuario } = useApp(); // pegar usuário autenticado
+
   const [image, setImage] = useState(null);
   const [nomeP, setNomeP] = useState('');
   const [projetos, setProjetos] = useState([]);
-  const [dataEntrega, setDataEntrega] = useState('');
   const [tipoProjeto, setTipoProjeto] = useState('');
   const [modalVisivel, setModalVisivel] = useState(false);
   const [dataSelecionada, setDataSelecionada] = useState(new Date());
   const [dataFormatada, setDataFormatada] = useState('');
   const [mostrardataPicker, setmostrardataPicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null); // data selecionada no filtro (yyyy-mm-dd) ou null para todos
-  const { usuario } = useApp(); 
-  
+  const [selectedDate, setSelectedDate] = useState(null);
+
   const NUM_DIAS = 30;
 
   const getDiasFuturos = () => {
     const hoje = new Date();
-    const dias = [];
-    for (let i = 0; i < NUM_DIAS; i++) {
+    return Array.from({ length: NUM_DIAS }, (_, i) => {
       const dia = new Date(hoje);
       dia.setDate(hoje.getDate() + i);
-      dias.push(dia);
-    }
-    return dias;
+      return dia;
+    });
   };
 
   const diasFuturos = getDiasFuturos();
 
-  const onChangeDate = (event, selected) => {
-    setmostrardataPicker(Platform.OS === 'ios');
+  const onChangeDate = (_, selected) => {
+    setmostrardataPicker(false);
     if (selected) {
       setDataSelecionada(selected);
-
       const day = selected.getDate().toString().padStart(2, '0');
       const month = (selected.getMonth() + 1).toString().padStart(2, '0');
       const year = selected.getFullYear();
-
       const dataFormatadaFinal = `${day}/${month}/${year}`;
       setDataFormatada(dataFormatadaFinal);
-      setDataEntrega(dataFormatadaFinal);
     }
   };
 
@@ -66,38 +61,58 @@ export default function Projetoscreen({ navigation }) {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+      setImage(base64Image);
     }
   };
 
-  const addProjeto = () => {
-    if (nomeP.trim() && dataEntrega.trim() && tipoProjeto.trim()) {
-      const novoProjeto = {
-        id: Date.now().toString(),
-        nomeP,
-        dataEntrega,
-        tipoProjeto,
-        imagem:
-          image ||
-          'https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png',
-      };
+  const criarProjeto = async () => {
+    if (!usuario?.uid) {
+      alert('Usuário não autenticado!');
+      return;
+    }
 
-      setProjetos([...projetos, novoProjeto]);
-      setNomeP('');
-      setDataEntrega('');
-      setTipoProjeto('');
-      setImage(null);
-      setModalVisivel(false);
+    if (nomeP.trim() && dataFormatada && tipoProjeto.trim()) {
+      try {
+        const novoProjeto = {
+          uid: usuario.uid,
+          nomeP,
+          dataEntrega: dataFormatada,
+          tipoProjeto,
+          image:
+            image ||
+            'https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png',
+        };
+
+        // Salva no Firestore
+        await addProjeto(novoProjeto);
+
+        // Atualiza localmente a lista de projetos
+        setProjetos((prev) => [...prev, { ...novoProjeto, id: Date.now().toString() }]);
+
+        // Limpa campos e fecha modal
+        setNomeP('');
+        setDataFormatada('');
+        setTipoProjeto('');
+        setImage(null);
+        setModalVisivel(false);
+
+        console.log('Projeto salvo no Firestore!');
+      } catch (error) {
+        console.error('Erro ao salvar projeto:', error);
+        alert('Erro ao salvar projeto, tente novamente.');
+      }
     } else {
       alert('Por favor, preencha todos os campos!');
     }
   };
 
   const excluirProj = (id) => {
-    setProjetos(projetos.filter((p) => p.id !== id));
+    setProjetos((prev) => prev.filter((p) => p.id !== id));
   };
 
   const renderProjeto = ({ item }) => (
@@ -107,9 +122,8 @@ export default function Projetoscreen({ navigation }) {
         activeOpacity={0.7}
       >
         <Image
-          source={{ uri: item.imagem }}
+          source={{ uri: item.image }}
           style={styles.listImage}
-          defaultSource={require('../../assets/no-image.jpg')}
         />
         <Text style={styles.nomeProjeto} numberOfLines={1}>
           {item.nomeP}
@@ -126,44 +140,35 @@ export default function Projetoscreen({ navigation }) {
     </View>
   );
 
-  // Função para calcular urgência do projeto (retorna 0 sem urgência, 1 médio, 2 urgente)
   const nivelUrgenciaDia = (dia) => {
-    // Verifica se existe projeto com entrega nesse dia e calcula o nível de urgência máximo
     const hoje = new Date();
-    const diaDate = new Date(dia);
-    const diffTime = diaDate - hoje;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = Math.ceil((dia - hoje) / (1000 * 60 * 60 * 24));
+    const dataIsoDia = dia.toISOString().split('T')[0];
 
-    // Filtra projetos com essa data
     const projetosNoDia = projetos.filter((p) => {
-      // converter p.dataEntrega (dd/mm/yyyy) para yyyy-mm-dd
-      const partes = p.dataEntrega.split('/');
-      const dataIso = `${partes[2]}-${partes[1]}-${partes[0]}`;
-      return dataIso === dia.toISOString().split('T')[0];
+      const [d, m, y] = p.dataEntrega.split('/');
+      const dataIso = `${y}-${m}-${d}`;
+      return dataIso === dataIsoDia;
     });
 
     if (projetosNoDia.length === 0) return 0;
-
-    if (diffDays <= 2 && diffDays >= 0) return 2; // urgente
-    if (diffDays <= 5 && diffDays >= 0) return 1; // médio
+    if (diffDays <= 2 && diffDays >= 0) return 2;
+    if (diffDays <= 5 && diffDays >= 0) return 1;
     return 0;
   };
 
-  // Filtra projetos para mostrar só os que têm data igual ao dia selecionado no filtro
   const projetosFiltrados = selectedDate
     ? projetos.filter((p) => {
-        const partes = p.dataEntrega.split('/');
-        const dataIso = `${partes[2]}-${partes[1]}-${partes[0]}`;
+        const [d, m, y] = p.dataEntrega.split('/');
+        const dataIso = `${y}-${m}-${d}`;
         return dataIso === selectedDate;
       })
     : projetos;
 
   return (
     <SafeAreaView style={styles.main}>
-      {/* Barra horizontal de datas */}
       <View style={styles.semanaContainer}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {/* Botão Ver Todos */}
           <TouchableOpacity
             style={[styles.diaSemana, selectedDate === null && styles.diaSelecionado]}
             onPress={() => setSelectedDate(null)}
@@ -181,10 +186,9 @@ export default function Projetoscreen({ navigation }) {
             });
 
             const nivelUrgencia = nivelUrgenciaDia(dia);
-
-            let backgroundColor = '#eee'; // padrão
-            if (nivelUrgencia === 2) backgroundColor = '#ff6b6b'; // vermelho urgente
-            else if (nivelUrgencia === 1) backgroundColor = '#ffa500'; // laranja alerta
+            let backgroundColor = '#eee';
+            if (nivelUrgencia === 2) backgroundColor = '#ff6b6b';
+            else if (nivelUrgencia === 1) backgroundColor = '#ffa500';
 
             const selecionado = selectedDate === isoDate;
 
@@ -203,14 +207,12 @@ export default function Projetoscreen({ navigation }) {
         </ScrollView>
       </View>
 
-      {/* Botão para adicionar projeto */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.bntAdd} onPress={() => setModalVisivel(true)}>
           <Text style={styles.addProjeto}>+</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Lista de projetos filtrada */}
       <FlatList
         data={projetosFiltrados}
         keyExtractor={(item) => item.id}
@@ -227,64 +229,65 @@ export default function Projetoscreen({ navigation }) {
         }
       />
 
-      {/* Modal de criação */}
       <Modal visible={modalVisivel} animationType="slide" transparent={true}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Novo Projeto</Text>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Novo Projeto</Text>
 
-          <TouchableOpacity onPress={pickImage}>
-            <Image
-              style={styles.image}
-              source={
-                image ? { uri: image } : require('../../assets/no-image.jpg')
-              }
-            />
-          </TouchableOpacity>
-
-          <TextInput
-            placeholder="Nome do projeto"
-            value={nomeP}
-            onChangeText={setNomeP}
-            style={styles.input}
-          />
-
-          <TouchableOpacity
-            style={styles.input}
-            onPress={() => setmostrardataPicker(true)}
-          >
-            <Text style={styles.dateText}>
-              {dataFormatada || 'Selecione a data de entrega'}
-            </Text>
-          </TouchableOpacity>
-
-          {mostrardataPicker && (
-            <DateTimePicker
-              value={dataSelecionada}
-              mode="date"
-              display="default"
-              onChange={onChangeDate}
-              minimumDate={new Date()}
-            />
-          )}
-
-          <TextInput
-            placeholder="Tipo do projeto (crochê ou desenho)"
-            value={tipoProjeto}
-            onChangeText={setTipoProjeto}
-            style={styles.input}
-          />
-
-          <View style={styles.btnModal}>
-            <TouchableOpacity style={styles.bntAddmodal} onPress={addProjeto}>
-              <Text style={styles.btnaddText}>CRIAR PROJETO</Text>
+            <TouchableOpacity onPress={pickImage}>
+              <Image
+                style={styles.image}
+                source={
+                  image ? { uri: image } : require('../../assets/no-image.jpg')
+                }
+              />
             </TouchableOpacity>
+
+            <TextInput
+              placeholder="Nome do projeto"
+              value={nomeP}
+              onChangeText={setNomeP}
+              style={styles.input}
+            />
 
             <TouchableOpacity
-              style={styles.bntAddmodal}
-              onPress={() => setModalVisivel(false)}
+              style={styles.input}
+              onPress={() => setmostrardataPicker(true)}
             >
-              <Text style={styles.btnaddText}>CANCELAR</Text>
+              <Text style={styles.dateText}>
+                {dataFormatada || 'Selecione a data de entrega'}
+              </Text>
             </TouchableOpacity>
+
+            {mostrardataPicker && (
+              <DateTimePicker
+                value={dataSelecionada}
+                mode="date"
+                display="default"
+                onChange={onChangeDate}
+                minimumDate={new Date()}
+              />
+            )}
+
+            <TextInput
+              placeholder="Tipo do projeto (crochê ou desenho)"
+              value={tipoProjeto}
+              onChangeText={setTipoProjeto}
+              style={styles.input}
+            />
+
+            <View style={styles.btnModal}>
+              <TouchableOpacity style={styles.bntAddmodal} onPress={criarProjeto}>
+                <Text style={styles.btnaddText}>CRIAR</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.bntAddmodal, { backgroundColor: '#ccc' }]}
+                onPress={() => setModalVisivel(false)}
+              >
+                <Text style={[styles.btnaddText, { color: '#333' }]}>CANCELAR</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -299,8 +302,7 @@ const styles = StyleSheet.create({
   },
   semanaContainer: {
     flexDirection: 'row',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    padding: 10,
     backgroundColor: '#fff',
   },
   diaSemana: {
@@ -354,11 +356,6 @@ const styles = StyleSheet.create({
     height: 200,
     marginBottom: 15,
     padding: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
-    elevation: 3,
   },
   listImage: {
     width: '100%',
@@ -394,38 +391,48 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
   },
-  modalContent: {
+  modalOverlay: {
     flex: 1,
-    backgroundColor: '#A05645',
-    margin: 20,
-    borderRadius: 15,
-    padding: 20,
+    backgroundColor: 'rgba(0,0,0,0.3)',
     justifyContent: 'center',
-  },
-  bntAddmodal: {
-    backgroundColor: '#964534',
-    margin: 10,
-    padding: 15,
     alignItems: 'center',
-    borderRadius: 6,
-    flex: 1,
   },
-  input: {
-    backgroundColor: 'white',
-    padding: 10,
-    marginVertical: 10,
-    borderRadius: 6,
+  modalContent: {
+    backgroundColor: '#fff',
+    width: '90%',
+    borderRadius: 12,
+    padding: 20,
   },
   modalTitle: {
     fontWeight: 'bold',
-    fontSize: 22,
-    color: 'white',
-    marginBottom: 20,
+    fontSize: 20,
+    color: '#333',
+    marginBottom: 
+ 20,
     textAlign: 'center',
+  },
+  input: {
+    backgroundColor: '#f0f0f0',
+    padding: 12,
+    marginVertical: 8,
+    borderRadius: 8,
   },
   btnModal: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 15,
+  },
+  bntAddmodal: {
+    backgroundColor: '#8B0000',
+    padding: 12,
+    borderRadius: 8,
+    flex: 1,
+    marginHorizontal: 5,
+    alignItems: 'center',
+  },
+  btnaddText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   image: {
     height: 200,
@@ -433,11 +440,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: 8,
     marginBottom: 15,
-  },
-  btnaddText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
   },
   dateText: {
     color: '#666',

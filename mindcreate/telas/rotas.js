@@ -38,7 +38,7 @@ function TabNavigator() {
       initialRouteName="telainicial"
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { backgroundColor: '#964534' },
+        tabBarStyle: { backgroundColor: '#8B0000' },
         tabBarActiveTintColor: 'white',
         tabBarInactiveTintColor: 'gray',
       }}>
@@ -90,9 +90,9 @@ export default function Rotas() {
     <Drawer.Navigator
       initialRouteName="telainicial"
       screenOptions={{
-        drawerStyle: { backgroundColor: '#c27464', width: 240 },
-        drawerActiveTintColor: '#fff',
-        drawerInactiveTintColor: '#55271D',
+        drawerStyle: { backgroundColor: '#8B0000', width: 240 },
+        drawerActiveTintColor: '#000000',
+        drawerInactiveTintColor: '#fff',
         drawerLabelStyle: { fontSize: 18 },
         headerStyle: { backgroundColor: '#fff5e6' },
         headerTintColor: '#C4624E',
