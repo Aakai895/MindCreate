@@ -62,7 +62,7 @@ export default function Carrinho({navigation}) {
         <Text style={styles.totalTexto}>Total: R$ {calcularTotal()}</Text>
       </View>
        <TouchableOpacity style={styles.bntAdd} >
-          <Text style={styles.btnaddText}>CRIAR PROJETO</Text>
+          <Text style={styles.btnaddText}>FINALIZAR COMPRA</Text>
         </TouchableOpacity>
     </SafeAreaView>
   );

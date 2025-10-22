@@ -28,7 +28,7 @@ export default function ComprasScreen({ navigation }) {
           style={styles.cart}
           onPress={() => navigation.navigate('Carrinho')}
         >
-          <Ionicons name="cart-sharp" size={30} color="#C14D34" />
+          <Ionicons name="cart-sharp" size={30} color="#8B0000" />
         </TouchableOpacity>
       </View>
 
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 3,
     width: 160,
-    margin: 5,
+    margin: 10,
     padding: 5,
     backgroundColor: '#fff',
   },

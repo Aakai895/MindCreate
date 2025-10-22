@@ -1,24 +1,14 @@
-import React, { useState } from 'react';
-import {
-  Text,
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Image,
-  Modal,
-  FlatList,
-  TextInput,
-  ScrollView,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {Text,SafeAreaView,StyleSheet,TouchableOpacity,View,Image,Modal,FlatList,TextInput,ScrollView,Alert,} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { addProjeto } from '../../firebase/firestore';
-// Supondo que você tenha um contexto para usuário, importe aqui
-import { useApp } from '../../context/authcontext'; 
+import { addProjeto, getProjetosByUsuario, excluirProjeto } from '../../firebase/firestore';
+import { useApp } from '../../context/authcontext';
+import {gerarId} from '../../funções/gerarId';
+
 
 export default function Projetoscreen({ navigation }) {
-  const { usuario } = useApp(); // pegar usuário autenticado
+  const { usuario } = useApp();
 
   const [image, setImage] = useState(null);
   const [nomeP, setNomeP] = useState('');
@@ -29,10 +19,29 @@ export default function Projetoscreen({ navigation }) {
   const [dataFormatada, setDataFormatada] = useState('');
   const [mostrardataPicker, setmostrardataPicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const projetoId = gerarId();
 
-  const NUM_DIAS = 30;
+ 
+  // Função para buscar os projetos do usuário no Firestore
+  const fetchProjetos = async () => {
+    if (!usuario?.uid) return;
+
+    try {
+      const projetosData = await getProjetosByUsuario(usuario.uid);
+      setProjetos(projetosData); // projetosData já tem {id, ...dados}
+    } catch (error) {
+      console.error('Erro ao buscar projetos:', error);
+      console.log(projetosData);
+    }
+  };
+
+  // useEffect que chama fetchProjetos quando o usuário mudar ou carregar
+  useEffect(() => {
+    fetchProjetos();
+  }, [usuario]);
 
   const getDiasFuturos = () => {
+    const NUM_DIAS = 30;
     const hoje = new Date();
     return Array.from({ length: NUM_DIAS }, (_, i) => {
       const dia = new Date(hoje);
@@ -50,8 +59,7 @@ export default function Projetoscreen({ navigation }) {
       const day = selected.getDate().toString().padStart(2, '0');
       const month = (selected.getMonth() + 1).toString().padStart(2, '0');
       const year = selected.getFullYear();
-      const dataFormatadaFinal = `${day}/${month}/${year}`;
-      setDataFormatada(dataFormatadaFinal);
+      setDataFormatada(`${day}/${month}/${year}`);
     }
   };
 
@@ -71,6 +79,7 @@ export default function Projetoscreen({ navigation }) {
   };
 
   const criarProjeto = async () => {
+    
     if (!usuario?.uid) {
       alert('Usuário não autenticado!');
       return;
@@ -81,6 +90,7 @@ export default function Projetoscreen({ navigation }) {
         const novoProjeto = {
           uid: usuario.uid,
           nomeP,
+          projetoId,
           dataEntrega: dataFormatada,
           tipoProjeto,
           image:
@@ -88,11 +98,10 @@ export default function Projetoscreen({ navigation }) {
             'https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png',
         };
 
-        // Salva no Firestore
         await addProjeto(novoProjeto);
 
-        // Atualiza localmente a lista de projetos
-        setProjetos((prev) => [...prev, { ...novoProjeto, id: Date.now().toString() }]);
+        // Atualiza lista puxando do Firestore para garantir ID correto
+        await fetchProjetos();
 
         // Limpa campos e fecha modal
         setNomeP('');
@@ -100,8 +109,6 @@ export default function Projetoscreen({ navigation }) {
         setTipoProjeto('');
         setImage(null);
         setModalVisivel(false);
-
-        console.log('Projeto salvo no Firestore!');
       } catch (error) {
         console.error('Erro ao salvar projeto:', error);
         alert('Erro ao salvar projeto, tente novamente.');
@@ -109,36 +116,36 @@ export default function Projetoscreen({ navigation }) {
     } else {
       alert('Por favor, preencha todos os campos!');
     }
+
+    console.log(projetoId);
   };
 
   const excluirProj = (id) => {
-    setProjetos((prev) => prev.filter((p) => p.id !== id));
-  };
-
-  const renderProjeto = ({ item }) => (
-    <View style={styles.card}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Projeto')}
-        activeOpacity={0.7}
-      >
-        <Image
-          source={{ uri: item.image }}
-          style={styles.listImage}
-        />
-        <Text style={styles.nomeProjeto} numberOfLines={1}>
-          {item.nomeP}
-        </Text>
-        <Text style={styles.tipoProjeto}>{item.tipoProjeto}</Text>
-        <Text style={styles.dataEntrega}>Entrega: {item.dataEntrega}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.btnExcluir}
-        onPress={() => excluirProj(item.id)}
-      >
-        <Text style={styles.excluirTexto}>Excluir</Text>
-      </TouchableOpacity>
-    </View>
+  Alert.alert(
+    'Excluir Projeto',
+    'Tem certeza que deseja excluir este projeto?',
+    [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'Excluir',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await excluirProjeto(id); // Exclui no Firestore
+            setProjetos((prev) => prev.filter((p) => p.id !== id)); // Atualiza localmente
+          } catch (error) {
+            console.error('Erro ao excluir projeto:', error);
+            alert('Erro ao excluir projeto. Tente novamente.');
+          }
+        },
+      },
+    ],
+    { cancelable: true }
   );
+};
 
   const nivelUrgenciaDia = (dia) => {
     const hoje = new Date();
@@ -164,6 +171,28 @@ export default function Projetoscreen({ navigation }) {
         return dataIso === selectedDate;
       })
     : projetos;
+
+  const renderProjeto = ({ item }) => (
+    <View style={styles.card}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Projeto', { projetoId: item.id })}
+        activeOpacity={0.7}
+      >
+        <Image source={{ uri: item.image }} style={styles.listImage} />
+        <Text style={styles.nomeProjeto} numberOfLines={1}>
+          {item.nomeP}
+        </Text>
+        <Text style={styles.tipoProjeto}>{item.tipoProjeto}</Text>
+        <Text style={styles.dataEntrega}>Entrega: {item.dataEntrega}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.btnExcluir}
+        onPress={() => excluirProj(item.id)}
+      >
+        <Text style={styles.excluirTexto}>Excluir</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.main}>
@@ -352,10 +381,10 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: 'white',
     borderRadius: 10,
-    width: 160,
+    width: 180,
     height: 200,
-    marginBottom: 15,
-    padding: 10,
+    marginBottom: 60,
+    padding: 5,
   },
   listImage: {
     width: '100%',
@@ -382,72 +411,72 @@ const styles = StyleSheet.create({
   btnExcluir: {
     marginTop: 10,
     backgroundColor: '#f8d7da',
-    paddingVertical: 6,
-    borderRadius: 20,
-    alignItems: 'center',
+    paddingVertical: 5,
+    borderRadius: 5,
   },
   excluirTexto: {
+    textAlign: 'center',
     color: '#721c24',
     fontWeight: 'bold',
-    fontSize: 12,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: '#000000aa',
     justifyContent: 'center',
-    alignItems: 'center',
+    paddingHorizontal: 20,
   },
   modalContent: {
-    backgroundColor: '#fff',
-    width: '90%',
-    borderRadius: 12,
+    backgroundColor: 'white',
+    borderRadius: 15,
     padding: 20,
   },
   modalTitle: {
     fontWeight: 'bold',
-    fontSize: 20,
-    color: '#333',
-    marginBottom: 
- 20,
+    fontSize: 18,
+    marginBottom: 10,
+    color: '#8B0000',
     textAlign: 'center',
   },
+  image: {
+    width: '100%',
+    height: 150,
+    marginBottom: 15,
+    borderRadius: 10,
+  },
   input: {
-    backgroundColor: '#f0f0f0',
-    padding: 12,
-    marginVertical: 8,
-    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    marginBottom: 15,
+    fontSize: 16,
+    color: '#333',
+  },
+  dateText: {
+    color: '#333',
+    fontSize: 16,
   },
   btnModal: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 15,
   },
   bntAddmodal: {
-    backgroundColor: '#8B0000',
-    padding: 12,
-    borderRadius: 8,
     flex: 1,
+    backgroundColor: '#8B0000',
+    paddingVertical: 12,
+    borderRadius: 10,
     marginHorizontal: 5,
-    alignItems: 'center',
   },
   btnaddText: {
     color: 'white',
     fontWeight: 'bold',
-  },
-  image: {
-    height: 200,
-    width: '100%',
-    alignSelf: 'center',
-    borderRadius: 8,
-    marginBottom: 15,
-  },
-  dateText: {
-    color: '#666',
+    textAlign: 'center',
   },
   emptyText: {
-    marginTop: 30,
-    fontSize: 16,
     textAlign: 'center',
+    marginTop: 40,
+    fontSize: 16,
     color: '#999',
   },
 });

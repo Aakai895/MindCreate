@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -15,73 +15,130 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+import { doc, onSnapshot, db, atualizarProjeto } from 'firebase/firestore';
+
 dayjs.extend(utc);
 
-export default function Projeto({ navigation }) {
-  console.log("renderizou")
-  const [image, setImage] = useState(
-    'https://thumb.ac-illust.com/b1/b170870007dfa419295d949814474ab2_t.jpeg'
-  );
-  const [nomeP] = useState('Boneca Fofa');
+export default function Projeto({ route, navigation }) {
+  const { projetoId } = route.params;
+
+  const [image, setImage] = useState('');
+  const [nomeP, setNomeP] = useState('');
   const [notes, setNotes] = useState('');
   const [tempoDecorrido, setTempoDecorrido] = useState(0);
   const [iniciado, setIniciado] = useState(false);
   const [carreiraNum, setCarreira] = useState(1);
 
-  const carreiraN = () => {
-    setCarreira(carreiraNum + 1);
-  };
-
+  // Escuta em tempo real as mudanças no projeto
   useEffect(() => {
-    let interval;
-    if (iniciado) {
-      interval = setInterval(() => {
-        setTempoDecorrido((prev) => prev + 1);
-      }, 1000);
-    }
+    const projetoRef = doc(db, 'projetos', projetoId);
+
+    const unsubscribe = onSnapshot(
+      projetoRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setImage(data.image || '');
+          setNomeP(data.nomeP || '');
+          setNotes(data.anotacoes || '');
+          setTempoDecorrido(data.tempo || 0);
+          setCarreira(data.carreiras || 1);
+        } else {
+          console.log('Projeto não encontrado');
+        }
+      },
+      (error) => {
+        console.error('Erro no onSnapshot:', error);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [projetoId]);
+
+  // Atualiza tempo no Firestore enquanto cronômetro está ativo
+  useEffect(() => {
+    if (!iniciado) return;
+
+    const interval = setInterval(() => {
+      setTempoDecorrido((prev) => {
+        const novo = prev + 1;
+        atualizarProjeto(projetoId, { tempo: novo });
+        return novo;
+      });
+    }, 1000);
+
     return () => clearInterval(interval);
   }, [iniciado]);
 
-  const iniciaCronometro = () => setIniciado(!iniciado);
-
-  const zerarCronometro = () => {
-    setTempoDecorrido(0);
-    setIniciado(false);
+  const iniciaCronometro = () => {
+    setIniciado(!iniciado);
   };
+
+  const zerarCronometro = async () => {
+    setIniciado(false);
+    setTempoDecorrido(0);
+    await atualizarProjeto(projetoId, { tempo: 0 });
+  };
+
+  const carreiraN = async () => {
+    const nova = carreiraNum + 1;
+    setCarreira(nova);
+    await atualizarProjeto(projetoId, { carreiras: nova });
+  };
+
+  // Atualiza anotações com debounce para evitar muitos writes
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      atualizarProjeto(projetoId, { anotacoes: notes });
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [notes]);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      allowsEditing: false,
       aspect: [4, 3],
       quality: 1,
     });
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      const uri = result.assets[0].uri;
+      setImage(uri);
+      await atualizarProjeto(projetoId, { image: uri });
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.cart}
-            onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={30} color="#C14D34" />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.cart} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={30} color="#C14D34" />
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.tit}>
         <Text style={styles.title}>{nomeP}</Text>
       </View>
 
       <TouchableOpacity onPress={pickImage} activeOpacity={0.8}>
-        <Image style={styles.image} source={{ uri: image }} />
+        {image ? (
+          <Image style={styles.image} source={{ uri: image }} />
+        ) : (
+          <View style={styles.imagePlaceholder}>
+            <Text>Sem imagem</Text>
+          </View>
+        )}
       </TouchableOpacity>
 
       <View style={styles.infoRow}>
         <View style={styles.careerContainer}>
           <Text style={styles.sectionTitle}>CARREIRA</Text>
-          <TouchableOpacity style={styles.careerBox} onPress={carreiraN} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.careerBox}
+            onPress={carreiraN}
+            activeOpacity={0.7}
+          >
             <Text style={styles.careerNumber}>{carreiraNum}</Text>
           </TouchableOpacity>
         </View>
@@ -102,7 +159,10 @@ export default function Projeto({ navigation }) {
                 color="#fff"
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={zerarCronometro} style={[styles.playerButton, styles.stopButton]}>
+            <TouchableOpacity
+              onPress={zerarCronometro}
+              style={[styles.playerButton, styles.stopButton]}
+            >
               <Icon name="stop" size={30} color="#fff" />
             </TouchableOpacity>
           </View>
@@ -137,11 +197,12 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? 40 : 0,
   },
   header: {
-    marginTop: 10,
-    marginBottom: 15,
+    marginTop: 7,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  tit: {
+    marginBottom: 15,
   },
   title: {
     fontSize: 28,
@@ -154,11 +215,15 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: 25,
     backgroundColor: '#ddd',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
+  },
+  imagePlaceholder: {
+    width: '100%',
+    height: 220,
+    borderRadius: 15,
+    marginBottom: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ddd',
   },
   infoRow: {
     flexDirection: 'row',
@@ -178,11 +243,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#8B0000',
-    shadowOpacity: 0.5,
-    shadowOffset: { width: 0, height: 8 },
-    shadowRadius: 10,
-    elevation: 10,
   },
   careerNumber: {
     fontSize: 36,
@@ -205,11 +265,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 15,
     alignItems: 'center',
-    shadowColor: '#8B0000',
-    shadowOpacity: 0.15,
-    shadowOffset: { width: 0, height: 6 },
-    shadowRadius: 12,
-    elevation: 6,
   },
   time: {
     fontSize: 26,
@@ -229,11 +284,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#8B0000',
-    shadowOpacity: 0.45,
-    shadowOffset: { width: 0, height: 7 },
-    shadowRadius: 12,
-    elevation: 8,
   },
   stopButton: {
     backgroundColor: '#B22222',
@@ -249,11 +299,6 @@ const styles = StyleSheet.create({
     minHeight: 120,
     fontSize: 16,
     color: '#333',
-    shadowColor: '#8B0000',
-    shadowOpacity: 0.15,
-    shadowOffset: { width: 0, height: 5 },
-    shadowRadius: 10,
-    elevation: 6,
   },
   button: {
     backgroundColor: '#8B0000',
@@ -261,11 +306,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: 25,
     alignItems: 'center',
-    shadowColor: '#8B0000',
-    shadowOpacity: 0.4,
-    shadowOffset: { width: 0, height: 8 },
-    shadowRadius: 12,
-    elevation: 10,
   },
   buttonText: {
     color: '#fff',

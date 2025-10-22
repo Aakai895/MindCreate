@@ -7,51 +7,86 @@ import {
   where,
   doc,
   setDoc,
+  deleteDoc,
+  updateDoc,
 } from 'firebase/firestore';
 
-// --- Função para adicionar um projeto para um usuário ---
-export async function addProjeto({
-  nomeP,
-  dataEntrega,
-  uid,
-  image,
-}) {
-  return await addDoc(collection(db, 'projetos'), {
-    nomeP,
-    dataEntrega,
-    uid,
-    image,
-  });
+// Atualizar projeto pelo id com os dados passados no objeto data
+export async function atualizarProjeto(id, data) {
+  try {
+    const projetoRef = doc(db, 'projetos', id);
+    await updateDoc(projetoRef, data);
+  } catch (error) {
+    console.error('Erro ao atualizar projeto:', error);
+    throw error;
+  }
 }
 
-// --- Função para buscar projetos de um usuário pelo id ---
+// Excluir projeto pelo id
+export async function excluirProjeto(id) {
+  try {
+    await deleteDoc(doc(db, 'projetos', id));
+  } catch (error) {
+    console.error('Erro ao excluir projeto:', error);
+    throw error;
+  }
+}
+
+// Adicionar projeto novo
+export async function addProjeto({ nomeP, dataEntrega, uid, image, projetoId}) {
+  try {
+    const docRef = await addDoc(collection(db, 'projetos'), {
+      nomeP,
+      dataEntrega,
+      uid,
+      image,
+      projetoId,
+
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Erro ao adicionar projeto:', error);
+    throw error;
+  }
+}
+
+// Buscar projetos de um usuário pelo uid
 export async function getProjetosByUsuario(uid) {
-  const projetosRef = collection(db, 'projeto');
-  const q = query(projetosRef, where('usuarioID', '==', uid));
-  const querySnapshot = await getDocs(q);
+  try {
+    const projetosRef = collection(db, 'projetos');
+    const q = query(projetosRef, where('uid', '==', uid));
+    const querySnapshot = await getDocs(q);
 
-  return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('Erro ao buscar projetos:', error);
+    throw error;
+  }
 }
 
-// --- Atualiza os dados do perfil do usuário ---
+// Atualizar perfil do usuário
 export async function updateUserProfile({
   uid,
   nome,
   bio,
   profileImageBase64,
   username,
+
 }) {
-  const userDocRef = doc(db, 'usuario', uid);
-
-  return await setDoc(
-    userDocRef,
-    {
-      nome,
-      bio,
-      imagem: profileImageBase64,
-      username, 
-    },
-    { merge: true }
-  );
+  try {
+    const userDocRef = doc(db, 'usuario', uid);
+    await setDoc(
+      userDocRef,
+      {
+        nome,
+        bio,
+        imagem: profileImageBase64,
+        username,
+      },
+      { merge: true }
+    );
+  } catch (error) {
+    console.error('Erro ao atualizar perfil do usuário:', error);
+    throw error;
+  }
 }
-

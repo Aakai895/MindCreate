@@ -7,7 +7,7 @@ const firebaseConfig = {
   authDomain: "mindcreate-354c0.firebaseapp.com",
   databaseURL: "https://mindcreate-354c0-default-rtdb.firebaseio.com",
   projectId: "mindcreate-354c0",
-  storageBucket: "mindcreate-354c0.firebasestorage.app",
+  storageBucket: "mindcreate-354c0.appspot.com",
   messagingSenderId: "479588412875",
   appId: "1:479588412875:web:0368bff305a85f43885a4e"
 };
