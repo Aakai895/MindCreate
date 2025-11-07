@@ -13,11 +13,14 @@ import {
 
 // Atualizar projeto pelo id com os dados passados no objeto data
 export async function atualizarProjeto(id, data) {
+  console.log('🔄 Atualizando projeto ID:', id);
+  
   try {
     const projetoRef = doc(db, 'projetos', id);
     await updateDoc(projetoRef, data);
+    console.log('✅ Projeto atualizado com sucesso');
   } catch (error) {
-    console.error('Erro ao atualizar projeto:', error);
+    console.error('❌ Erro ao atualizar projeto:', error);
     throw error;
   }
 }
@@ -33,7 +36,7 @@ export async function excluirProjeto(id) {
 }
 
 // Adicionar projeto novo
-export async function addProjeto({ nomeP, dataEntrega, uid, image, projetoId}) {
+export async function addProjeto({ nomeP, dataEntrega, uid, image, projetoId }) {
   try {
     const docRef = await addDoc(collection(db, 'projetos'), {
       nomeP,
@@ -41,8 +44,13 @@ export async function addProjeto({ nomeP, dataEntrega, uid, image, projetoId}) {
       uid,
       image,
       projetoId,
-
+      tempo: 0,
+      carreiras: 1,
+      anotacoes: '',
+      iniciado: false,
+      createdAt: new Date()
     });
+    console.log('✅ Projeto criado com ID:', docRef.id);
     return docRef.id;
   } catch (error) {
     console.error('Erro ao adicionar projeto:', error);
@@ -57,7 +65,13 @@ export async function getProjetosByUsuario(uid) {
     const q = query(projetosRef, where('uid', '==', uid));
     const querySnapshot = await getDocs(q);
 
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const projetos = querySnapshot.docs.map((doc) => ({ 
+      id: doc.id, // ← ID do documento Firestore
+      ...doc.data() 
+    }));
+    
+    console.log('📋 Projetos encontrados:', projetos.length);
+    return projetos;
   } catch (error) {
     console.error('Erro ao buscar projetos:', error);
     throw error;
@@ -71,7 +85,6 @@ export async function updateUserProfile({
   bio,
   profileImageBase64,
   username,
-
 }) {
   try {
     const userDocRef = doc(db, 'usuario', uid);

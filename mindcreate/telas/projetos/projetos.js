@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import {Text,SafeAreaView,StyleSheet,TouchableOpacity,View,Image,Modal,FlatList,TextInput,ScrollView,Alert,} from 'react-native';
+import {
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Image,
+  Modal,
+  FlatList,
+  TextInput,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { addProjeto, getProjetosByUsuario, excluirProjeto } from '../../firebase/firestore';
 import { useApp } from '../../context/authcontext';
-import {gerarId} from '../../funções/gerarId';
-
+import { gerarId } from '../../funções/gerarId';
 
 export default function Projetoscreen({ navigation }) {
   const { usuario } = useApp();
@@ -21,21 +32,21 @@ export default function Projetoscreen({ navigation }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const projetoId = gerarId();
 
- 
   // Função para buscar os projetos do usuário no Firestore
   const fetchProjetos = async () => {
     if (!usuario?.uid) return;
 
     try {
+      console.log('🔍 Buscando projetos para usuário:', usuario.uid);
       const projetosData = await getProjetosByUsuario(usuario.uid);
-      setProjetos(projetosData); // projetosData já tem {id, ...dados}
+      console.log('📋 Projetos encontrados:', projetosData.length);
+      setProjetos(projetosData);
     } catch (error) {
       console.error('Erro ao buscar projetos:', error);
-      console.log(projetosData);
+      Alert.alert('Erro', 'Não foi possível carregar os projetos');
     }
   };
 
-  // useEffect que chama fetchProjetos quando o usuário mudar ou carregar
   useEffect(() => {
     fetchProjetos();
   }, [usuario]);
@@ -52,7 +63,7 @@ export default function Projetoscreen({ navigation }) {
 
   const diasFuturos = getDiasFuturos();
 
-  const onChangeDate = (_, selected) => {
+  const onChangeDate = (event, selected) => {
     setmostrardataPicker(false);
     if (selected) {
       setDataSelecionada(selected);
@@ -79,9 +90,8 @@ export default function Projetoscreen({ navigation }) {
   };
 
   const criarProjeto = async () => {
-    
     if (!usuario?.uid) {
-      alert('Usuário não autenticado!');
+      Alert.alert('Erro', 'Usuário não autenticado!');
       return;
     }
 
@@ -93,59 +103,55 @@ export default function Projetoscreen({ navigation }) {
           projetoId,
           dataEntrega: dataFormatada,
           tipoProjeto,
-          image:
-            image ||
-            'https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png',
+          image: image || 'https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png',
         };
 
+        console.log('➕ Criando novo projeto:', novoProjeto);
         await addProjeto(novoProjeto);
-
-        // Atualiza lista puxando do Firestore para garantir ID correto
         await fetchProjetos();
 
-        // Limpa campos e fecha modal
         setNomeP('');
         setDataFormatada('');
         setTipoProjeto('');
         setImage(null);
         setModalVisivel(false);
+        Alert.alert('Sucesso', 'Projeto criado com sucesso!');
       } catch (error) {
         console.error('Erro ao salvar projeto:', error);
-        alert('Erro ao salvar projeto, tente novamente.');
+        Alert.alert('Erro', 'Erro ao salvar projeto, tente novamente.');
       }
     } else {
-      alert('Por favor, preencha todos os campos!');
+      Alert.alert('Atenção', 'Por favor, preencha todos os campos!');
     }
-
-    console.log(projetoId);
   };
 
   const excluirProj = (id) => {
-  Alert.alert(
-    'Excluir Projeto',
-    'Tem certeza que deseja excluir este projeto?',
-    [
-      {
-        text: 'Cancelar',
-        style: 'cancel',
-      },
-      {
-        text: 'Excluir',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await excluirProjeto(id); // Exclui no Firestore
-            setProjetos((prev) => prev.filter((p) => p.id !== id)); // Atualiza localmente
-          } catch (error) {
-            console.error('Erro ao excluir projeto:', error);
-            alert('Erro ao excluir projeto. Tente novamente.');
-          }
+    Alert.alert(
+      'Excluir Projeto',
+      'Tem certeza que deseja excluir este projeto?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
         },
-      },
-    ],
-    { cancelable: true }
-  );
-};
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await excluirProjeto(id);
+              setProjetos((prev) => prev.filter((p) => p.id !== id));
+              Alert.alert('Sucesso', 'Projeto excluído com sucesso!');
+            } catch (error) {
+              console.error('Erro ao excluir projeto:', error);
+              Alert.alert('Erro', 'Erro ao excluir projeto. Tente novamente.');
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
 
   const nivelUrgenciaDia = (dia) => {
     const hoje = new Date();
@@ -172,27 +178,34 @@ export default function Projetoscreen({ navigation }) {
       })
     : projetos;
 
-  const renderProjeto = ({ item }) => (
-    <View style={styles.card}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Projeto', { projetoId: item.id })}
-        activeOpacity={0.7}
-      >
-        <Image source={{ uri: item.image }} style={styles.listImage} />
-        <Text style={styles.nomeProjeto} numberOfLines={1}>
-          {item.nomeP}
-        </Text>
-        <Text style={styles.tipoProjeto}>{item.tipoProjeto}</Text>
-        <Text style={styles.dataEntrega}>Entrega: {item.dataEntrega}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.btnExcluir}
-        onPress={() => excluirProj(item.id)}
-      >
-        <Text style={styles.excluirTexto}>Excluir</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  const renderProjeto = ({ item }) => {
+    console.log('🔍 Renderizando projeto:', item.id, item.nomeP);
+    
+    return (
+      <View style={styles.card}>
+        <TouchableOpacity
+          onPress={() => {
+            console.log('🚀 Navegando para projeto ID:', item.id);
+            navigation.navigate('Projeto', { projetoId: item.id });
+          }}
+          activeOpacity={0.7}
+        >
+          <Image source={{ uri: item.image }} style={styles.listImage} />
+          <Text style={styles.nomeProjeto} numberOfLines={1}>
+            {item.nomeP}
+          </Text>
+          <Text style={styles.tipoProjeto}>{item.tipoProjeto}</Text>
+          <Text style={styles.dataEntrega}>Entrega: {item.dataEntrega}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.btnExcluir}
+          onPress={() => excluirProj(item.id)}
+        >
+          <Text style={styles.excluirTexto}>Excluir</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.main}>

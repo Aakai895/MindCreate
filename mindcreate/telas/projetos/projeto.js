@@ -1,26 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  Image,
-  Platform,
-} from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, Platform, Alert } from 'react-native';
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase/firebase'; 
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import { doc, onSnapshot, db, atualizarProjeto } from 'firebase/firestore';
-
 dayjs.extend(utc);
 
 export default function Projeto({ route, navigation }) {
   const { projetoId } = route.params;
+  
+  console.log('📱 Tela de DETALHES - Projeto ID recebido:', projetoId);
+  console.log('📱 Tipo do ID:', typeof projetoId);
 
   const [image, setImage] = useState('');
   const [nomeP, setNomeP] = useState('');
@@ -28,31 +22,62 @@ export default function Projeto({ route, navigation }) {
   const [tempoDecorrido, setTempoDecorrido] = useState(0);
   const [iniciado, setIniciado] = useState(false);
   const [carreiraNum, setCarreira] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  // Função para atualizar projeto
+  const atualizarProjeto = useCallback(async (dados) => {
+    try {
+      console.log('🔄 Atualizando projeto:', projetoId, 'com dados:', dados);
+      const projetoRef = doc(db, 'projetos', projetoId);
+      await updateDoc(projetoRef, dados);
+      console.log('✅ Projeto atualizado com sucesso');
+    } catch (error) {
+      console.error('❌ Erro ao atualizar projeto:', error);
+      Alert.alert('Erro', 'Não foi possível atualizar o projeto');
+    }
+  }, [projetoId]);
 
   // Escuta em tempo real as mudanças no projeto
   useEffect(() => {
+    console.log('🔍 Iniciando listener para projeto ID:', projetoId);
+    console.log('🔍 DB object:', db); // ← ISSO É IMPORTANTE!
+
+    if (!projetoId) {
+      console.log('❌ projetoId é undefined ou null');
+      Alert.alert('Erro', 'ID do projeto não encontrado');
+      return;
+    }
+
     const projetoRef = doc(db, 'projetos', projetoId);
+    console.log('👂 Criando listener para:', projetoRef.path);
 
     const unsubscribe = onSnapshot(
       projetoRef,
       (docSnap) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
+          console.log('📄 Dados recebidos do Firestore:', data);
           setImage(data.image || '');
           setNomeP(data.nomeP || '');
           setNotes(data.anotacoes || '');
           setTempoDecorrido(data.tempo || 0);
           setCarreira(data.carreiras || 1);
+          setIniciado(data.iniciado || false);
         } else {
-          console.log('Projeto não encontrado');
+          console.log('❌ Projeto não encontrado no Firestore');
+          Alert.alert('Erro', 'Projeto não encontrado');
         }
       },
       (error) => {
-        console.error('Erro no onSnapshot:', error);
+        console.error('❌ Erro no onSnapshot:', error);
+        Alert.alert('Erro', 'Falha ao carregar projeto');
       }
     );
 
-    return () => unsubscribe();
+    return () => {
+      console.log('🔇 Removendo listener do projeto');
+      unsubscribe();
+    };
   }, [projetoId]);
 
   // Atualiza tempo no Firestore enquanto cronômetro está ativo
@@ -62,38 +87,42 @@ export default function Projeto({ route, navigation }) {
     const interval = setInterval(() => {
       setTempoDecorrido((prev) => {
         const novo = prev + 1;
-        atualizarProjeto(projetoId, { tempo: novo });
+        atualizarProjeto({ tempo: novo });
         return novo;
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [iniciado]);
+  }, [iniciado, atualizarProjeto]);
 
-  const iniciaCronometro = () => {
-    setIniciado(!iniciado);
+  const iniciaCronometro = async () => {
+    const novoEstado = !iniciado;
+    setIniciado(novoEstado);
+    await atualizarProjeto({ iniciado: novoEstado });
   };
 
   const zerarCronometro = async () => {
     setIniciado(false);
     setTempoDecorrido(0);
-    await atualizarProjeto(projetoId, { tempo: 0 });
+    await atualizarProjeto({ tempo: 0, iniciado: false });
   };
 
   const carreiraN = async () => {
     const nova = carreiraNum + 1;
     setCarreira(nova);
-    await atualizarProjeto(projetoId, { carreiras: nova });
+    await atualizarProjeto({ carreiras: nova });
   };
 
   // Atualiza anotações com debounce para evitar muitos writes
   useEffect(() => {
     const timeout = setTimeout(() => {
-      atualizarProjeto(projetoId, { anotacoes: notes });
+      if (notes !== '') {
+        atualizarProjeto({ anotacoes: notes });
+      }
     }, 1000);
 
     return () => clearTimeout(timeout);
-  }, [notes]);
+  }, [notes, atualizarProjeto]);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -102,11 +131,32 @@ export default function Projeto({ route, navigation }) {
       aspect: [4, 3],
       quality: 1,
     });
+    
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       setImage(uri);
-      await atualizarProjeto(projetoId, { image: uri });
+      await atualizarProjeto({ image: uri });
     }
+  };
+
+  const finalizarProjeto = () => {
+    Alert.alert(
+      'Finalizar Projeto',
+      'Deseja finalizar este projeto?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Finalizar',
+          onPress: () => {
+            setIniciado(false);
+            navigation.goBack();
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -118,7 +168,7 @@ export default function Projeto({ route, navigation }) {
       </View>
 
       <View style={styles.tit}>
-        <Text style={styles.title}>{nomeP}</Text>
+        <Text style={styles.title}>{nomeP || 'Carregando...'}</Text>
       </View>
 
       <TouchableOpacity onPress={pickImage} activeOpacity={0.8}>
@@ -126,7 +176,7 @@ export default function Projeto({ route, navigation }) {
           <Image style={styles.image} source={{ uri: image }} />
         ) : (
           <View style={styles.imagePlaceholder}>
-            <Text>Sem imagem</Text>
+            <Text>Toque para adicionar imagem</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -182,7 +232,7 @@ export default function Projeto({ route, navigation }) {
         />
       </View>
 
-      <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+      <TouchableOpacity style={styles.button} onPress={finalizarProjeto} activeOpacity={0.8}>
         <Text style={styles.buttonText}>Finalizar Projeto</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -212,7 +262,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 220,
-    borderRadius: 15,
+    borderRadius: 5,
     marginBottom: 25,
     backgroundColor: '#ddd',
   },
