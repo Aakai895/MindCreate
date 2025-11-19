@@ -536,11 +536,11 @@ const storeItems = [
     price: 'R$15,00',
     image: 'https://via.placeholder.com/160',
   }
-
+];
 const tabs = ['grid', 'store'];
  
 
-// ESTILOS ORGANIZADOS POR SEÇÃO
+
 const styles = StyleSheet.create({
   // ==================== CONTAINER PRINCIPAL ====================
   container: { 
@@ -557,8 +557,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: '#666',
   },
-
-  // ==================== SEÇÃO DE PERFIL ====================
   profileContainer: {
     flexDirection: 'row',
     alignItems: 'center',
