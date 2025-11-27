@@ -43,7 +43,8 @@ export default function ProfileScreen({ navigation, route }) {
   // 🔄 Effect para carregar usuário
   useEffect(() => {
     console.log('👤 Estado do usuario:', usuario ? 'Carregado' : 'Carregando...');
-    
+    console.log(usuario.imagem) // undefined
+;
     if (usuario?.uid) {
       const newViewedUserId = route.params?.userId || usuario.uid;
       setViewedUserId(newViewedUserId);
@@ -189,34 +190,43 @@ export default function ProfileScreen({ navigation, route }) {
       flatListRef.current.scrollToIndex({ index });
     }
   };
-
-  const renderGrid = () => (
-    <FlatList
-      data={posts}
-      numColumns={3}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <TouchableOpacity onPress={() => console.log('Abrir post:', item.id)}>
-          <Image source={{ uri: item.image }} style={styles.gridImage} />
+  
+const renderGrid = () => (
+  <FlatList
+    data={posts}
+    numColumns={3}
+    keyExtractor={(item) => item.id}
+    renderItem={({ item }) => (
+      <View style={styles.gridItem}>
+        <TouchableOpacity 
+          onPress={() => console.log('Abrir post:', item.id)}
+          activeOpacity={0.7}
+        >
+          <Image 
+            source={{ uri: item.image }} 
+            style={styles.gridImage} 
+            resizeMode="cover"
+          />
         </TouchableOpacity>
-      )}
-      contentContainerStyle={{ paddingBottom: 70 }}
-      ListEmptyComponent={
-        <View style={styles.emptyContainer}>
-          <Ionicons name="images-outline" size={64} color="#ccc" />
-          <Text style={styles.emptyText}>
-            {isOwnProfile ? 'Você ainda não tem publicações' : 'Este usuário ainda não tem publicações'}
+      </View>
+    )}
+    contentContainerStyle={styles.gridContainer}
+    showsVerticalScrollIndicator={false}
+    ListEmptyComponent={
+      <View style={styles.emptyContainer}>
+        <Ionicons name="images-outline" size={64} color="#ccc" />
+        <Text style={styles.emptyText}>
+          {isOwnProfile ? 'Você ainda não tem publicações' : 'Este usuário ainda não tem publicações'}
+        </Text>
+        {isOwnProfile && (
+          <Text style={styles.emptySubtext}>
+            Toque no botão + para criar sua primeira publicação!
           </Text>
-          {isOwnProfile && (
-            <Text style={styles.emptySubtext}>
-              Toque no botão + para criar sua primeira publicação!
-            </Text>
-          )}
-        </View>
-      }
-    />
-  );
-
+        )}
+      </View>
+    }
+  />
+);
   const renderStore = () => (
     <FlatList
       data={storeItems}
@@ -233,6 +243,26 @@ export default function ProfileScreen({ navigation, route }) {
       contentContainerStyle={{ paddingBottom: 70 }}
     />
   );
+
+
+const getProfileImageUrl = () => {
+  const user = isOwnProfile ? usuario : viewedUser;
+
+  if (!user) return 'https://via.placeholder.com/100';
+
+  // Se for base64
+  if (user.imagem && user.imagem.startsWith('/9j/')) { // exemplo de base64 JPEG
+    return `data:image/jpeg;base64,${user.imagem}`;
+  }
+  if (user.imagemPerfil && user.imagemPerfil.startsWith('/9j/')) {
+    return `data:image/jpeg;base64,${user.imagemPerfil}`;
+  }
+
+  // Caso seja URL normal
+  return user.imagem || user.imagemPerfil || user.userImage || 
+         user.profileImage || user.photoURL || 'https://via.placeholder.com/100';
+};
+
 
   // ⏳ Estados de carregamento
   if (!isUserReady) {
@@ -268,16 +298,14 @@ export default function ProfileScreen({ navigation, route }) {
     );
   }
 
-  // 🎯 RETURN PRINCIPAL - TODO O JSX AQUI
+
   return (
     <View style={styles.container}>
       {/* Profile Header */}
       <View style={styles.profileContainer}>
         <Image
           source={{ 
-            uri: isOwnProfile 
-              ? (usuario?.imagem || 'https://via.placeholder.com/100')
-              : (viewedUser?.imagem || 'https://via.placeholder.com/100')
+            uri: getProfileImageUrl()
           }}
           style={styles.profilePic}
         />
@@ -538,8 +566,6 @@ const storeItems = [
   }
 ];
 const tabs = ['grid', 'store'];
- 
-
 
 const styles = StyleSheet.create({
   // ==================== CONTAINER PRINCIPAL ====================
@@ -614,12 +640,19 @@ const styles = StyleSheet.create({
     color: '#666',
   },
 
-  // ==================== SEÇÃO DE GRID DE POSTS ====================
+  // ==================== SEÇÃO DE GRID DE POSTS CORRIGIDA ====================
+   gridContainer: {
+    flexGrow: 1,
+  },
+  gridItem: {
+    width: (width - 2) / 3, // Largura exata para 3 colunas
+    height: (width - 2) / 3, // Altura igual à largura (quadrado)
+    margin: 0.5, // Margem mínima
+  },
   gridImage: {
-    width: '33%',           // Ocupa 1/3 da largura (3 colunas)
-    aspectRatio: 1,         // Mantém proporção quadrada
-    margin: '0.15%',        // Margem mínima entre imagens
-    borderRadius: 3,
+    width: '100%',
+    height: '100%',
+    borderRadius: 1,
   },
   emptyContainer: {
     flex: 1,
@@ -768,11 +801,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: '#666',
   },
-  compressingSubtext: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 5,
-  },
   selectedImageContainer: {
     flex: 1,
   },
@@ -795,18 +823,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 2,
   },
-  imageStatus: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginTop: 2,
-  },
-  statusSafe: {
+  qualityGood: {
     color: '#4CAF50',
   },
-  statusWarning: {
+  qualityMedium: {
     color: '#FF9800',
   },
-  statusDanger: {
+  qualityLow: {
     color: '#F44336',
   },
   uploadPlaceholder: {
@@ -823,12 +846,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: '#999',
     fontSize: 12,
-  },
-  uploadSubHint: {
-    marginTop: 2,
-    color: '#a33',
-    fontSize: 10,
-    fontWeight: 'bold',
   },
 
   // ==================== FORMULÁRIO NO MODAL ====================
@@ -870,18 +887,10 @@ const styles = StyleSheet.create({
     borderLeftColor: '#a33',
     marginTop: 10,
   },
-  tipContent: {
-    flex: 1,
-    marginLeft: 8,
-  },
-  tipTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#a33',
-    marginBottom: 2,
-  },
   tipText: {
     fontSize: 12,
     color: '#666',
+    marginLeft: 8,
+    flex: 1,
   },
 });

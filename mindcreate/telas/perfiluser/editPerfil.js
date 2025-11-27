@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 10,
   },
-  editPhotoText: {
+   editPhotoText: {
     textAlign: 'center',
     color: '#a33',
     marginBottom: 30,

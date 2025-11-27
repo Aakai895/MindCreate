@@ -171,7 +171,7 @@ export async function deletePost(id) {
 // Buscar usuário por ID
 export async function getUserById(userId) {
   try {
-    const userDoc = await getDoc(doc(db, 'users', userId));
+    const userDoc = await getDoc(doc(db, 'usuario', userId));
     
     if (userDoc.exists()) {
       return { id: userDoc.id, ...userDoc.data() };
@@ -179,25 +179,6 @@ export async function getUserById(userId) {
     return null;
   } catch (error) {
     console.error('❌ Erro ao buscar usuário:', error);
-    throw error;
-  }
-}
-
-// Buscar usuário por username
-export async function getUserByUsername(username) {
-  try {
-    const usersRef = collection(db, 'users');
-    const q = query(usersRef, where('username', '==', username));
-    
-    const querySnapshot = await getDocs(q);
-    
-    if (!querySnapshot.empty) {
-      const userDoc = querySnapshot.docs[0];
-      return { id: userDoc.id, ...userDoc.data() };
-    }
-    return null;
-  } catch (error) {
-    console.error('❌ Erro ao buscar usuário por username:', error);
     throw error;
   }
 }
@@ -237,7 +218,7 @@ export async function createOrUpdateUserProfile({
   }
 }
 
-// Atualizar perfil do usuário
+// Atualizar perfil do usuário com validação de username
 export async function updateUserProfile({
   uid,
   nome,
@@ -246,19 +227,46 @@ export async function updateUserProfile({
   username,
 }) {
   try {
-    const userDocRef = doc(db, 'users', uid);
-    await setDoc(
-      userDocRef,
-      {
-        nome,
-        bio,
-        imagem: profileImageBase64,
-        username,
-        updatedAt: serverTimestamp()
-      },
-      { merge: true }
-    );
+    if (!uid) {
+      throw new Error('UID do usuário não fornecido');
+    }
+
+    const userDocRef = doc(db, 'usuario', uid);
+    const userDoc = await getDoc(userDocRef);
+    const currentUserData = userDoc.exists() ? userDoc.data() : {};
+
+    // Se o username foi alterado, verificar disponibilidade
+    if (username && username !== currentUserData.username) {
+      const usernameCheck = await checkUsernameAvailability(username);
+      
+      if (!usernameCheck.available) {
+        throw new Error(usernameCheck.error);
+      }
+    }
+
+    // Preparar dados para atualização
+    const updateData = {
+      nome: nome || '',
+      bio: bio || '',
+      updatedAt: serverTimestamp()
+    };
+
+    // Adicionar username apenas se foi fornecido
+    if (username) {
+      updateData.username = username.toLowerCase().trim();
+    }
+
+    // Adicionar imagem se foi fornecida
+    if (profileImageBase64) {
+      updateData.imagem = profileImageBase64;
+    }
+
+    console.log('💾 Atualizando perfil:', updateData);
+    
+    await updateDoc(userDocRef, updateData);
     console.log('✅ Perfil atualizado com sucesso');
+    
+    return { success: true, message: 'Perfil atualizado com sucesso!' };
   } catch (error) {
     console.error('❌ Erro ao atualizar perfil do usuário:', error);
     throw error;
@@ -268,8 +276,8 @@ export async function updateUserProfile({
 // Seguir usuário
 export async function followUser(currentUserId, userToFollowId) {
   try {
-    const currentUserRef = doc(db, 'users', currentUserId);
-    const userToFollowRef = doc(db, 'users', userToFollowId);
+    const currentUserRef = doc(db, 'usuario', currentUserId);
+    const userToFollowRef = doc(db, 'usuario', userToFollowId);
     
     await updateDoc(currentUserRef, {
       following: arrayUnion(userToFollowId),
@@ -291,8 +299,8 @@ export async function followUser(currentUserId, userToFollowId) {
 // Deixar de seguir usuário
 export async function unfollowUser(currentUserId, userToUnfollowId) {
   try {
-    const currentUserRef = doc(db, 'users', currentUserId);
-    const userToUnfollowRef = doc(db, 'users', userToUnfollowId);
+    const currentUserRef = doc(db, 'usuario', currentUserId);
+    const userToUnfollowRef = doc(db, 'usuario', userToUnfollowId);
     
     await updateDoc(currentUserRef, {
       following: arrayRemove(userToUnfollowId),
