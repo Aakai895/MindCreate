@@ -75,14 +75,17 @@ export default function EditPerfil({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={28} color="#a33" />
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={28} color="#8B0000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Editar Perfil</Text>
         <View style={{ width: 28 }} />
       </View>
 
-      <TouchableOpacity onPress={pickImage}>
+      <TouchableOpacity style={styles.avatarContainer} onPress={pickImage}>
         <Image
           source={{
             uri: profileImageBase64
@@ -93,28 +96,52 @@ export default function EditPerfil({ navigation }) {
           }}
           style={styles.avatar}
         />
+        <View style={styles.editPhotoOverlay}>
+          <Ionicons name="camera" size={24} color="#fff" />
+        </View>
         <Text style={styles.editPhotoText}>Editar Foto</Text>
       </TouchableOpacity>
 
       <View style={styles.form}>
-        <Text style={styles.label}>Nome</Text>
-        <TextInput style={styles.input} value={nome} onChangeText={setNome} />
+        <View style={styles.inputContainer}>
+          <Ionicons name="person-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+          <TextInput 
+            style={styles.input} 
+            value={nome} 
+            onChangeText={setNome}
+            placeholder="Nome"
+            placeholderTextColor="#8B0000"
+          />
+        </View>
 
-        <Text style={styles.label}>Usuário</Text>
-        <TextInput style={styles.input} value={username} onChangeText={setUsername} />
+        <View style={styles.inputContainer}>
+          <Ionicons name="at" size={20} color="#8B0000" style={styles.inputIcon} />
+          <TextInput 
+            style={styles.input} 
+            value={username} 
+            onChangeText={setUsername}
+            placeholder="Usuário"
+            placeholderTextColor="#8B0000"
+          />
+        </View>
 
-        <Text style={styles.label}>Bio</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          multiline
-          numberOfLines={4}
-          value={bio}
-          onChangeText={setBio}
-        />
+        <View style={styles.inputContainer}>
+          <Ionicons name="document-text-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            multiline
+            numberOfLines={4}
+            value={bio}
+            onChangeText={setBio}
+            placeholder="Bio"
+            placeholderTextColor="#8B0000"
+          />
+        </View>
       </View>
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Salvar</Text>
+        <Text style={styles.saveButtonText}>Salvar Alterações</Text>
+        <Ionicons name="checkmark-circle" size={24} color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -123,63 +150,118 @@ export default function EditPerfil({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5e8da',
+    backgroundColor: '#fff5e6',
     padding: 20,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 40,
+    paddingTop: 20,
+  },
+  backButton: {
+    padding: 8,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#a33',
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#8B0000',
+    letterSpacing: 0.5,
+  },
+  avatarContainer: {
+    alignItems: 'center',
+    marginBottom: 40,
   },
   avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 100,
-    alignSelf: 'center',
-    marginBottom: 10,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 4,
+    borderColor: '#8B0000',
   },
-   editPhotoText: {
+  editPhotoOverlay: {
+    position: 'absolute',
+    bottom: 10,
+    right: '35%',
+    backgroundColor: '#8B0000',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  editPhotoText: {
     textAlign: 'center',
-    color: '#a33',
-    marginBottom: 30,
-    fontWeight: '600',
+    color: '#8B0000',
+    marginTop: 12,
+    fontWeight: '700',
+    fontSize: 16,
   },
   form: {
     marginBottom: 30,
   },
-  label: {
-    color: '#444',
-    marginBottom: 5,
-    fontWeight: '600',
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#8B0000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  inputIcon: {
+    marginRight: 12,
   },
   input: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ddd',
+    flex: 1,
+    paddingVertical: 16,
+    fontSize: 16,
+    color: '#8B0000',
+    fontWeight: '600',
   },
   textArea: {
     height: 100,
     textAlignVertical: 'top',
+    paddingTop: 16,
   },
   saveButton: {
-    backgroundColor: '#a33',
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: '#8B0000',
+    padding: 20,
+    borderRadius: 16,
     alignItems: 'center',
-    elevation: 2,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+    marginTop: 20,
   },
   saveButtonText: {
     color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontWeight: '800',
+    fontSize: 18,
+    marginRight: 8,
+    letterSpacing: 0.5,
   },
 });

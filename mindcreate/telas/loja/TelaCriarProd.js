@@ -33,7 +33,7 @@ export default function Chatscreen(props) {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.cardIMG}>
         <Text style={styles.cardTexto}>
-          FOTOS DO PRODUTO <Text style={{ color: 'red' }}>*</Text>
+          FOTOS DO PRODUTO <Text style={styles.asterisco}>*</Text>
         </Text>
 
         <View style={styles.row}>
@@ -42,7 +42,7 @@ export default function Chatscreen(props) {
           ))}
 
           <TouchableOpacity style={styles.addBox} onPress={pickImage}>
-            <Text style={styles.plus}>+</Text>
+            <Ionicons name="add" size={32} color="#8B0000" />
           </TouchableOpacity>
         </View>
       </View>
@@ -60,7 +60,7 @@ export default function Chatscreen(props) {
           value={nome}
           onChangeText={setNome}
           placeholder={'Digite o nome do produto'}
-          placeholderTextColor="#000"
+          placeholderTextColor="#8B0000"
         />
       </View>
 
@@ -77,18 +77,25 @@ export default function Chatscreen(props) {
           value={desc}
           onChangeText={setDesc}
           placeholder={'Escreva a descrição'}
-          placeholderTextColor="#000"
+          placeholderTextColor="#8B0000"
+          multiline
         />
       </View>
 
       <View style={styles.card}>
         <View style={styles.titulocardP}>
-          <Ionicons name="pricetag-outline" size={20} color={''} />
+          <Ionicons name="pricetag-outline" size={20} color="#8B0000" />
           <Text style={styles.cardTexto}>
             PREÇO <Text style={styles.asterisco}>*</Text>
           </Text>
         </View>
-        <TextInput style={styles.cardTextoI} maxLength={6} placeholder={'Definir'} keyboardType='numeric'/>
+        <TextInput 
+          style={styles.cardTextoI} 
+          maxLength={6} 
+          placeholder={'Definir'} 
+          placeholderTextColor="#8B0000"
+          keyboardType='numeric'
+        />
       </View>
 
       <View style={styles.card}>
@@ -107,135 +114,179 @@ export default function Chatscreen(props) {
           </TouchableOpacity>
         </View>
       </View>
+      
       <View style={styles.footer}>
         <TouchableOpacity style={styles.footerbtn}>
+          <Ionicons name="document-text-outline" size={24} color="#fff" />
           <Text style={styles.footertextoBotao}>ADICIONAR ARQUIVO</Text>
-          <Ionicons name="document-text-outline" size={28} color={''} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerbtn}>
+        <TouchableOpacity style={[styles.footerbtn, styles.footerbtnPrimary]}>
           <Text style={styles.footertextoBotao}>FINALIZAR</Text>
+          <Ionicons name="checkmark-circle" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
-</ScrollView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    flexGrow: 1,
     backgroundColor: '#fff5e6',
-    padding: 8,
+    padding: 20,
   },
   card: {
-    backgroundColor: "#F2A190",
-    padding: 16,
-    marginBottom: 12,
-    margin: 7,
-    borderRadius: 8,
-    borderColor: "#ddd",
-    elevation: 2,
-    bottom: 50
+    backgroundColor: "#fff",
+    padding: 20,
+    marginBottom: 16,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: "#8B0000",
   },
   cardIMG: {
-    backgroundColor: "#F2A190",
-    padding: 16,
-    marginBottom: 12,
-    margin: 7,
-    borderRadius: 8,
-    borderColor: "#ddd",
-    elevation: 2,
-    height: 150,
-    bottom: 50,
+    backgroundColor: "#fff",
+    padding: 20,
+    marginBottom: 16,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: "#8B0000",
   },
   cardD: {
-    backgroundColor: "#F2A190",
-    padding: 16,
-    marginBottom: 12,
-    margin: 7,
-    borderRadius: 8,
-    borderColor: "#ddd",
-    elevation: 2,
-    bottom: 50,
-    height: 160,
+    backgroundColor: "#fff",
+    padding: 20,
+    marginBottom: 16,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: "#8B0000",
   },
   cardTextoBTN: {
-    backgroundColor: '#FFAE9D',
+    backgroundColor: '#8B0000',
     borderRadius: 12,
-    padding: 4,
-    marginBottom: 2,
-    flex: 1,
-    fontWeight: 'bold',
-    width: 90,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    color: '#fff',
+    fontWeight: '700',
+    textAlign: 'center',
+    fontSize: 14,
   },
   cardBotoes: {
     flexDirection: "row",
     justifyContent: "space-between", 
-    marginTop: 10,
-    alignContent: 'center',
+    marginTop: 12,
+    gap: 8,
+  },
+  cardBotao: {
+    flex: 1,
   },
   cardTextoI: {
-    marginTop: 5,
-    color: "#000",
+    marginTop: 8,
+    color: "#8B0000",
+    fontSize: 16,
+    fontWeight: '600',
+    padding: 12,
+    backgroundColor: '#fff5e6',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#8B0000',
   },
   cardTexto: {
-    fontWeight: 'bold',
-    fontSize: 15,
+    fontWeight: '800',
+    fontSize: 16,
+    color: "#8B0000",
+    letterSpacing: 0.5,
   },
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 16,
+    padding: 20,
     backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderColor: "#ddd",
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    borderTopWidth: 2,
+    borderColor: "#8B0000",
+    marginTop: 20,
+  },
+  footerbtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#8B0000',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 16,
+    flex: 1,
+    marginHorizontal: 6,
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 6,
+  },
+  footerbtnPrimary: {
+    backgroundColor: '#8B0000',
   },
   footertextoBotao: {
-    fontWeight: 'bold',
-    flexWrap: 'wrap',
+    fontWeight: '800',
+    color: '#fff',
+    fontSize: 16,
+    marginHorizontal: 8,
+    letterSpacing: 0.5,
   },
   titulocardP: {
     flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
   },
   asterisco: {
-    color: "red",
+    color: "#8B0000",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 12,
   },
   contador: {
-    fontSize: 12,
-    color: "#E58585",
+    fontSize: 14,
+    color: "#8B0000",
+    fontWeight: '600',
   },
   row: {
     flexDirection: "row",
-    gap: 10,
+    gap: 12,
+    flexWrap: 'wrap',
+    marginTop: 12,
   },
   addBox: {
     width: 80,
     height: 80,
     borderWidth: 2,
     borderStyle: 'dashed',
-    borderColor: '#000',
+    borderColor: '#8B0000',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 12,
+    backgroundColor: '#fff5e6',
   },
   image: {
     width: 80,
     height: 80,
-    marginRight: 10,
-    borderRadius: 8,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#8B0000',
   },
-  plus: {
-    fontSize: 28,
-    fontWeight: "bold",
-  }
 });

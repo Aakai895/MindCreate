@@ -17,6 +17,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { addProjeto, getProjetosByUsuario, excluirProjeto } from '../../firebase/firestore';
 import { useApp } from '../../context/authcontext';
 import { gerarId } from '../../funções/gerarId';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Projetoscreen({ navigation }) {
   const { usuario } = useApp();
@@ -201,6 +202,7 @@ export default function Projetoscreen({ navigation }) {
           style={styles.btnExcluir}
           onPress={() => excluirProj(item.id)}
         >
+          <Ionicons name="trash-outline" size={18} color="#fff" />
           <Text style={styles.excluirTexto}>Excluir</Text>
         </TouchableOpacity>
       </View>
@@ -228,7 +230,7 @@ export default function Projetoscreen({ navigation }) {
             });
 
             const nivelUrgencia = nivelUrgenciaDia(dia);
-            let backgroundColor = '#eee';
+            let backgroundColor = '#fff';
             if (nivelUrgencia === 2) backgroundColor = '#ff6b6b';
             else if (nivelUrgencia === 1) backgroundColor = '#ffa500';
 
@@ -251,7 +253,7 @@ export default function Projetoscreen({ navigation }) {
 
       <View style={styles.header}>
         <TouchableOpacity style={styles.bntAdd} onPress={() => setModalVisivel(true)}>
-          <Text style={styles.addProjeto}>+</Text>
+          <Ionicons name="add" size={32} color="#fff" />
         </TouchableOpacity>
       </View>
 
@@ -263,11 +265,14 @@ export default function Projetoscreen({ navigation }) {
         columnWrapperStyle={styles.columnWrapper}
         contentContainerStyle={styles.flatListContent}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>
-            {selectedDate
-              ? 'Nenhum projeto para esta data.'
-              : 'Nenhum projeto criado ainda.'}
-          </Text>
+          <View style={styles.emptyContainer}>
+            <Ionicons name="folder-open-outline" size={64} color="#8B0000" />
+            <Text style={styles.emptyText}>
+              {selectedDate
+                ? 'Nenhum projeto para esta data.'
+                : 'Nenhum projeto criado ainda.'}
+            </Text>
+          </View>
         }
       />
 
@@ -276,26 +281,35 @@ export default function Projetoscreen({ navigation }) {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Novo Projeto</Text>
 
-            <TouchableOpacity onPress={pickImage}>
+            <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
               <Image
                 style={styles.image}
                 source={
                   image ? { uri: image } : require('../../assets/no-image.jpg')
                 }
               />
+              <View style={styles.imageOverlay}>
+                <Ionicons name="camera" size={32} color="#fff" />
+                <Text style={styles.imageOverlayText}>Adicionar Imagem</Text>
+              </View>
             </TouchableOpacity>
 
-            <TextInput
-              placeholder="Nome do projeto"
-              value={nomeP}
-              onChangeText={setNomeP}
-              style={styles.input}
-            />
+            <View style={styles.inputContainer}>
+              <Ionicons name="create-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+              <TextInput
+                placeholder="Nome do projeto"
+                placeholderTextColor="#8B0000"
+                value={nomeP}
+                onChangeText={setNomeP}
+                style={styles.input}
+              />
+            </View>
 
             <TouchableOpacity
-              style={styles.input}
+              style={styles.inputContainer}
               onPress={() => setmostrardataPicker(true)}
             >
+              <Ionicons name="calendar-outline" size={20} color="#8B0000" style={styles.inputIcon} />
               <Text style={styles.dateText}>
                 {dataFormatada || 'Selecione a data de entrega'}
               </Text>
@@ -311,23 +325,28 @@ export default function Projetoscreen({ navigation }) {
               />
             )}
 
-            <TextInput
-              placeholder="Tipo do projeto (crochê ou desenho)"
-              value={tipoProjeto}
-              onChangeText={setTipoProjeto}
-              style={styles.input}
-            />
+            <View style={styles.inputContainer}>
+              <Ionicons name="pricetags-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+              <TextInput
+                placeholder="Tipo do projeto (crochê ou desenho)"
+                placeholderTextColor="#8B0000"
+                value={tipoProjeto}
+                onChangeText={setTipoProjeto}
+                style={styles.input}
+              />
+            </View>
 
             <View style={styles.btnModal}>
               <TouchableOpacity style={styles.bntAddmodal} onPress={criarProjeto}>
-                <Text style={styles.btnaddText}>CRIAR</Text>
+                <Text style={styles.btnaddText}>CRIAR PROJETO</Text>
+                <Ionicons name="checkmark-circle" size={20} color="#fff" />
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.bntAddmodal, { backgroundColor: '#ccc' }]}
+                style={[styles.bntAddmodal, styles.cancelButton]}
                 onPress={() => setModalVisivel(false)}
               >
-                <Text style={[styles.btnaddText, { color: '#333' }]}>CANCELAR</Text>
+                <Text style={[styles.btnaddText, styles.cancelText]}>CANCELAR</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -344,152 +363,246 @@ const styles = StyleSheet.create({
   },
   semanaContainer: {
     flexDirection: 'row',
-    padding: 10,
+    padding: 16,
     backgroundColor: '#fff',
+    borderBottomWidth: 2,
+    borderBottomColor: '#8B0000',
   },
   diaSemana: {
     width: 70,
     height: 60,
-    marginRight: 10,
-    borderRadius: 10,
+    marginRight: 12,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#8B0000',
   },
   diaSelecionado: {
     backgroundColor: '#8B0000',
   },
   textoDia: {
-    color: '#333',
-    fontWeight: 'bold',
+    color: '#8B0000',
+    fontWeight: '800',
     fontSize: 14,
   },
   textoSelecionado: {
     color: 'white',
-    fontWeight: 'bold',
+    fontWeight: '800',
     fontSize: 14,
   },
   header: {
-    padding: 10,
+    padding: 20,
     alignItems: 'flex-end',
   },
   bntAdd: {
     backgroundColor: '#8B0000',
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 8,
-  },
-  addProjeto: {
-    color: 'white',
-    fontSize: 30,
-    fontWeight: 'bold',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   flatListContent: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
     paddingBottom: 20,
   },
   columnWrapper: {
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
   },
   card: {
-    backgroundColor: 'white',
-    borderRadius: 10,
+    backgroundColor: '#fff',
+    borderRadius: 20,
     width: 180,
-    height: 200,
-    marginBottom: 60,
-    padding: 5,
+    marginBottom: 20,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: '#8B0000',
   },
   listImage: {
     width: '100%',
     height: 120,
-    borderRadius: 8,
-    marginBottom: 10,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: '#8B0000',
   },
   nomeProjeto: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    color: '#333',
+    fontWeight: '800',
+    fontSize: 16,
+    color: '#8B0000',
+    marginBottom: 4,
   },
   tipoProjeto: {
-    fontSize: 12,
+    fontSize: 14,
     fontStyle: 'italic',
-    color: '#C14D34',
-    marginTop: 2,
+    color: '#8B0000',
+    marginBottom: 4,
+    fontWeight: '600',
   },
   dataEntrega: {
     fontSize: 12,
-    color: '#666',
-    marginTop: 2,
+    color: '#8B0000',
+    fontWeight: '600',
   },
   btnExcluir: {
-    marginTop: 10,
-    backgroundColor: '#f8d7da',
-    paddingVertical: 5,
-    borderRadius: 5,
+    marginTop: 12,
+    backgroundColor: '#8B0000',
+    paddingVertical: 10,
+    borderRadius: 12,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   excluirTexto: {
-    textAlign: 'center',
-    color: '#721c24',
-    fontWeight: 'bold',
+    color: '#fff',
+    fontWeight: '800',
+    marginLeft: 6,
+    fontSize: 14,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: '#000000aa',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
   modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 15,
-    padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   modalTitle: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    marginBottom: 10,
+    fontWeight: '800',
+    fontSize: 24,
+    marginBottom: 20,
     color: '#8B0000',
     textAlign: 'center',
+    letterSpacing: 0.5,
+  },
+  imageContainer: {
+    position: 'relative',
+    marginBottom: 20,
   },
   image: {
     width: '100%',
-    height: 150,
-    marginBottom: 15,
-    borderRadius: 10,
+    height: 160,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: '#8B0000',
+  },
+  imageOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(139, 0, 0, 0.7)',
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageOverlayText: {
+    color: '#fff',
+    marginTop: 8,
+    fontWeight: '700',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#8B0000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  inputIcon: {
+    marginRight: 12,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginBottom: 15,
+    flex: 1,
+    paddingVertical: 16,
     fontSize: 16,
-    color: '#333',
+    color: '#8B0000',
+    fontWeight: '600',
   },
   dateText: {
-    color: '#333',
+    color: '#8B0000',
     fontSize: 16,
+    fontWeight: '600',
+    paddingVertical: 16,
   },
   btnModal: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 10,
   },
   bntAddmodal: {
     flex: 1,
     backgroundColor: '#8B0000',
-    paddingVertical: 12,
-    borderRadius: 10,
-    marginHorizontal: 5,
+    paddingVertical: 16,
+    borderRadius: 16,
+    marginHorizontal: 6,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 6,
+  },
+  cancelButton: {
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#8B0000',
   },
   btnaddText: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    color: '#fff',
+    fontWeight: '800',
+    fontSize: 16,
+    marginRight: 8,
+    letterSpacing: 0.5,
+  },
+  cancelText: {
+    color: '#8B0000',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
   },
   emptyText: {
     textAlign: 'center',
-    marginTop: 40,
-    fontSize: 16,
-    color: '#999',
+    marginTop: 16,
+    fontSize: 18,
+    color: '#8B0000',
+    fontWeight: '600',
   },
 });

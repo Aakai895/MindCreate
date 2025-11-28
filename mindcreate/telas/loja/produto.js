@@ -32,12 +32,17 @@ export default function Produto({ navigation }) {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={28} color="#C14D34" />
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={28} color="#8B0000" />
           </TouchableOpacity>
         </View>
 
-        <Image style={styles.image} source={{ uri: image }} />
+        <View style={styles.imageContainer}>
+          <Image style={styles.image} source={{ uri: image }} />
+        </View>
 
         <View style={styles.content}>
           <Text style={styles.title}>{title}</Text>
@@ -46,24 +51,31 @@ export default function Produto({ navigation }) {
             <Rating
               type="star"
               ratingCount={5}
-              imageSize={24}
+              imageSize={26}
               startingValue={rating}
               onFinishRating={handleRating}
               showRating={false}
-              starStyle={{ backgroundColor: 'transparent' }}
+              tintColor="#fff5e6"
             />
             <Text style={styles.price}>{price}</Text>
           </View>
 
-          <TouchableOpacity style={styles.buyButton} onPress={() => navigation.navigate('Pagar')}>
+          <TouchableOpacity 
+            style={styles.buyButton} 
+            onPress={() => navigation.navigate('Pagar')}
+          >
+            <Ionicons name="flash" size={20} color="#fff" />
             <Text style={styles.buyButtonText}>Comprar Agora</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.cartButton}>
+            <Ionicons name="cart" size={20} color="#8B0000" />
             <Text style={styles.cartButtonText}>Adicionar ao Carrinho</Text>
           </TouchableOpacity>
 
-          <Text style={styles.sectionTitle}>Descrição</Text>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Descrição</Text>
+          </View>
           <Text style={styles.description}>{description}</Text>
         </View>
       </ScrollView>
@@ -74,72 +86,139 @@ export default function Produto({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF5E6',
+    backgroundColor: '#fff5e6',
   },
   header: {
-    padding: 16,
+    padding: 20,
     paddingTop: 24,
+  },
+  backButton: {
+    padding: 12,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  imageContainer: {
+    backgroundColor: '#fff',
+    marginHorizontal: 20,
+    borderRadius: 20,
+    padding: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
   },
   image: {
     width: '100%',
-    height: 300,
+    height: 320,
     resizeMode: 'cover',
+    borderRadius: 16,
   },
   content: {
-    padding: 20,
+    padding: 24,
   },
   title: {
-    fontSize: 22,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 12,
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#8B0000',
+    marginBottom: 16,
+    lineHeight: 32,
   },
   ratingPriceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   price: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#C14D34',
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#8B0000',
   },
   buyButton: {
-    backgroundColor: '#C14D34',
-    paddingVertical: 14,
-    borderRadius: 10,
+    backgroundColor: '#8B0000',
+    paddingVertical: 18,
+    borderRadius: 16,
     alignItems: 'center',
-    marginBottom: 12,
-    elevation: 2,
+    marginBottom: 16,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   buyButtonText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '800',
+    marginLeft: 8,
+    letterSpacing: 0.5,
   },
   cartButton: {
-    backgroundColor: '#FFE3D4',
-    paddingVertical: 14,
-    borderRadius: 10,
+    backgroundColor: '#fff',
+    paddingVertical: 18,
+    borderRadius: 16,
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 28,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#8B0000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   cartButtonText: {
-    color: '#C14D34',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#8B0000',
+    fontSize: 18,
+    fontWeight: '800',
+    marginLeft: 8,
+    letterSpacing: 0.5,
+  },
+  sectionHeader: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#8B0000',
+    marginBottom: 16,
+    paddingBottom: 8,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 10,
-    color: '#333',
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#8B0000',
+    letterSpacing: 0.5,
   },
   description: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 16,
+    lineHeight: 24,
     textAlign: 'justify',
-    color: '#555',
+    color: '#8B0000',
+    fontWeight: '500',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
 });

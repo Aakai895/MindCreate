@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TextInput,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Inicialscreen({ navigation }) {
 
@@ -17,38 +18,86 @@ export default function Inicialscreen({ navigation }) {
       <View style={styles.form}>
         <View style={styles.field}>
           <Text style={styles.label}>Materiais usados</Text>
-          <TextInput style={styles.input} placeholder="Materiais usados"/>
+          <View style={styles.inputContainer}>
+            <Ionicons name="cube-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+            <TextInput 
+              style={styles.input} 
+              placeholder="Materiais usados"
+              placeholderTextColor="#8B0000"
+            />
+          </View>
         </View>
 
         <View style={styles.row}>
           <View style={styles.fieldRow}>
             <Text style={styles.label}>Preço da linha</Text>
-            <TextInput style={styles.input} placeholder="R$00,00" keyboardType="numeric"/>
+            <View style={styles.inputContainer}>
+              <Ionicons name="pricetag-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+              <TextInput 
+                style={styles.input} 
+                placeholder="R$00,00" 
+                keyboardType="numeric"
+                placeholderTextColor="#8B0000"
+              />
+            </View>
           </View>
           <View style={styles.fieldRow}>
             <Text style={styles.label}>Tempo gasto</Text>
-            <TextInput style={styles.input} placeholder="00:00" keyboardType="numeric"/>
+            <View style={styles.inputContainer}>
+              <Ionicons name="time-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+              <TextInput 
+                style={styles.input} 
+                placeholder="00:00" 
+                keyboardType="numeric"
+                placeholderTextColor="#8B0000"
+              />
+            </View>
           </View>
         </View>
 
         <View style={styles.row}>
           <View style={styles.fieldRow}>
             <Text style={styles.label}>Peso total</Text>
-            <TextInput style={styles.input} placeholder="00kg" keyboardType="numeric"/>
+            <View style={styles.inputContainer}>
+              <Ionicons name="scale-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+              <TextInput 
+                style={styles.input} 
+                placeholder="00kg" 
+                keyboardType="numeric"
+                placeholderTextColor="#8B0000"
+              />
+            </View>
           </View>
           <View style={styles.fieldRow}>
             <Text style={styles.label}>Outros gastos(R$)</Text>
-            <TextInput style={styles.input} placeholder="R$00,00" keyboardType="numeric"/>
+            <View style={styles.inputContainer}>
+              <Ionicons name="card-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+              <TextInput 
+                style={styles.input} 
+                placeholder="R$00,00" 
+                keyboardType="numeric"
+                placeholderTextColor="#8B0000"
+              />
+            </View>
           </View>
         </View>
 
         <View style={styles.field}>
           <Text style={styles.label}>Custo p/hora</Text>
-          <TextInput style={styles.input} placeholder="R$00,00/h" keyboardType="numeric"/>
+          <View style={styles.inputContainer}>
+            <Ionicons name="speedometer-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+            <TextInput 
+              style={styles.input} 
+              placeholder="R$00,00/h" 
+              keyboardType="numeric"
+              placeholderTextColor="#8B0000"
+            />
+          </View>
         </View>
 
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>CALCULAR</Text>
+          <Ionicons name="calculator" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -58,58 +107,85 @@ export default function Inicialscreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAEBD7", // bege claro
-    padding: 20,
+    backgroundColor: "#fff5e6",
+    padding: 24,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 24,
+    fontWeight: "800",
     textAlign: "center",
-    marginVertical: 20,
+    marginVertical: 30,
     textTransform: "uppercase",
+    color: "#8B0000",
+    letterSpacing: 1,
+    textShadowColor: 'rgba(139, 0, 0, 0.2)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
   },
   form: {
     flex: 1,
   },
   field: {
-    marginBottom: 15,
+    marginBottom: 20,
   },
   fieldRow: {
     flex: 1,
-    marginHorizontal: 5,
+    marginHorizontal: 6,
   },
   label: {
-    fontSize: 14,
-    marginBottom: 5,
+    fontSize: 16,
+    marginBottom: 8,
+    color: "#8B0000",
+    fontWeight: "700",
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    borderWidth: 2,
+    borderColor: '#8B0000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  inputIcon: {
+    marginRight: 12,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    padding: 10,
-    fontSize: 14,
+    flex: 1,
+    paddingVertical: 16,
+    fontSize: 16,
+    color: '#8B0000',
+    fontWeight: '600',
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 15,
+    marginBottom: 20,
   },
   button: {
-    backgroundColor: "#B64B35",
-    padding: 14,
-    borderRadius: 10,
+    backgroundColor: "#8B0000",
+    padding: 20,
+    borderRadius: 16,
     alignItems: "center",
-    marginTop: 10,
-    elevation: 3,
+    marginTop: 30,
+    flexDirection: 'row',
+    justifyContent: 'center',
     shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   buttonText: {
     color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
+    fontWeight: "800",
+    fontSize: 18,
+    marginRight: 12,
+    letterSpacing: 1,
   },
 });

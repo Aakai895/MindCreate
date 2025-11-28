@@ -10,15 +10,18 @@ export default function CartaoCreditoScreen({ navigation }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack("Pagar")} style={{right: 140,}}>
-          <Ionicons name="arrow-back" size={28} color="#a33" />
-        </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.goBack("Pagar")} style={styles.backButton}>
+        <Ionicons name="arrow-back" size={28} color="#8B0000" />
+      </TouchableOpacity>
+      
       <View style={styles.card}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <View style={styles.logoMastercard} />
-          <View style={[styles.logoMastercard, { backgroundColor: "#EB001B", marginLeft: -10 }]} />
+        <View style={styles.cardHeader}>
+          <View style={styles.logoContainer}>
+            <View style={styles.logoMastercard} />
+            <View style={[styles.logoMastercard, styles.logoRed]} />
+          </View>
+          <Text style={styles.cardTitle}>CARTÃO DE DÉBITO</Text>
         </View>
-        <Text style={styles.cardTitle}>CARTÃO DE DÉBITO</Text>
         <Text style={styles.cardNumber}>XXXX XXXX XXXX XXXX</Text>
         <View style={styles.cardFooter}>
           <View>
@@ -32,37 +35,44 @@ export default function CartaoCreditoScreen({ navigation }) {
         </View>
       </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Número do cartão"
-        keyboardType="numeric"
-        value={numero}
-        onChangeText={setNumero}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Nome do Titular"
-        value={titular}
-        onChangeText={setTitular}
-      />
-      <View style={styles.row}>
+      <View style={styles.formContainer}>
         <TextInput
-          style={[styles.input, styles.halfInput]}
-          placeholder="CVV"
+          style={styles.input}
+          placeholder="Número do cartão"
+          placeholderTextColor="#FFD7C2"
           keyboardType="numeric"
-          value={cvv}
-          onChangeText={setCvv}
+          value={numero}
+          onChangeText={setNumero}
         />
         <TextInput
-          style={[styles.input, styles.halfInput]}
-          placeholder="Validade"
-          value={validade}
-          onChangeText={setValidade}
+          style={styles.input}
+          placeholder="Nome do Titular"
+          placeholderTextColor="#FFD7C2"
+          value={titular}
+          onChangeText={setTitular}
         />
+        <View style={styles.row}>
+          <TextInput
+            style={[styles.input, styles.halfInput]}
+            placeholder="CVV"
+            placeholderTextColor="#FFD7C2"
+            keyboardType="numeric"
+            value={cvv}
+            onChangeText={setCvv}
+          />
+          <TextInput
+            style={[styles.input, styles.halfInput]}
+            placeholder="Validade"
+            placeholderTextColor="#FFD7C2"
+            value={validade}
+            onChangeText={setValidade}
+          />
+        </View>
       </View>
 
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Adicionar Cartão</Text>
+        <Ionicons name="card" size={20} color="#fff" style={styles.buttonIcon} />
       </TouchableOpacity>
     </ScrollView>
   );
@@ -72,34 +82,65 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     alignItems: "center",
-    padding: 20,
+    padding: 24,
     backgroundColor: "#FFF5E6", 
   },
+  backButton: {
+    alignSelf: 'flex-start',
+    padding: 12,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
   card: {
-    backgroundColor: "#A94436",
-    borderRadius: 12,
-    padding: 20,
+    backgroundColor: "#8B0000",
+    borderRadius: 20,
+    padding: 24,
     width: "100%",
-    marginBottom: 30,
-    elevation: 5,
+    marginBottom: 32,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  logoContainer: {
+    flexDirection: "row",
   },
   logoMastercard: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: "#F79E1B",
   },
+  logoRed: {
+    backgroundColor: "#EB001B",
+    marginLeft: -12,
+  },
   cardTitle: {
-    color: "white",
-    fontSize: 14,
-    marginTop: 10,
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+    letterSpacing: 1,
   },
   cardNumber: {
-    color: "white",
-    fontSize: 18,
-    letterSpacing: 2,
-    marginTop: 10,
-    fontWeight: "bold",
+    color: "#fff",
+    fontSize: 22,
+    letterSpacing: 3,
+    marginVertical: 16,
+    fontWeight: "700",
+    textAlign: 'center',
   },
   cardFooter: {
     flexDirection: "row",
@@ -109,19 +150,35 @@ const styles = StyleSheet.create({
   smallText: {
     color: "#FFD7C2",
     fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 0.5,
   },
   cardInfo: {
-    color: "white",
-    fontSize: 14,
-    marginTop: 4,
+    color: "#fff",
+    fontSize: 16,
+    marginTop: 6,
+    fontWeight: "700",
+  },
+  formContainer: {
+    width: "100%",
+    marginBottom: 20,
   },
   input: {
-    backgroundColor: "#CC5A43",
+    backgroundColor: "#8B0000",
     width: "100%",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
-    color: "white",
+    padding: 18,
+    borderRadius: 16,
+    marginBottom: 16,
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    borderWidth: 2,
+    borderColor: "#A94436",
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   row: {
     flexDirection: "row",
@@ -132,17 +189,28 @@ const styles = StyleSheet.create({
     width: "48%",
   },
   button: {
-    backgroundColor: "#CC5A43",
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    backgroundColor: "#8B0000",
+    paddingVertical: 18,
+    paddingHorizontal: 32,
+    borderRadius: 16,
     marginTop: 20,
     width: "100%",
     alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   buttonText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
+    color: "#fff",
+    fontWeight: "800",
+    fontSize: 18,
+    letterSpacing: 0.5,
+  },
+  buttonIcon: {
+    marginLeft: 12,
   },
 });

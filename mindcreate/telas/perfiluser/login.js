@@ -9,6 +9,7 @@ import {
   Alert
 } from 'react-native';
 import { loginUser } from "../../firebase/authfirebase";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -35,27 +36,40 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.title}>Login</Text>
         <Text style={styles.message}>Entre para explorar a nossa comunidade!</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <View style={styles.inputContainer}>
+          <Ionicons name="mail-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#8B0000"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+        </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
-          <Text>Não tem conta? Cadastre-se aqui.</Text>
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            placeholderTextColor="#8B0000"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+        </View>
+
+        <TouchableOpacity 
+          style={styles.registerLink} 
+          onPress={() => navigation.navigate('Cadastro')}
+        >
+          <Text style={styles.registerText}>Não tem conta? Cadastre-se aqui.</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>Entrar</Text>
+          <Ionicons name="arrow-forward" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -75,35 +89,79 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   title: {
-    fontSize: 40,
-    fontWeight: 'bold',
+    fontSize: 36,
+    fontWeight: '800',
     color: '#8B0000',
-    marginBottom: 2,
+    marginBottom: 12,
     marginTop: 50,
+    letterSpacing: 1,
+    textShadowColor: 'rgba(139, 0, 0, 0.2)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
   },
   message: {
-    fontSize: 15,
-    color: '#000',
+    fontSize: 16,
+    color: '#8B0000',
+    marginBottom: 40,
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingHorizontal: 16,
     marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#8B0000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  inputIcon: {
+    marginRight: 12,
   },
   input: {
-    width: '100%',
-    backgroundColor: 'rgba(132, 0, 0, 0.3)',
-    borderRadius: 8,
-    padding: 20,
+    flex: 1,
+    paddingVertical: 18,
+    fontSize: 16,
+    color: '#8B0000',
+    fontWeight: '600',
+  },
+  registerLink: {
     marginTop: 20,
-    fontSize: 15,
+    padding: 12,
+  },
+  registerText: {
+    color: '#8B0000',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   button: {
-    width: '75%',
-    backgroundColor: '#000',
-    borderRadius: 8,
-    padding: 15,
+    width: '100%',
+    backgroundColor: '#8B0000',
+    borderRadius: 16,
+    padding: 20,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: 30,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   buttonText: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontWeight: '800',
+    fontSize: 18,
+    marginRight: 8,
+    letterSpacing: 0.5,
   },
 });

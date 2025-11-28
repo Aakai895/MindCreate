@@ -13,7 +13,6 @@ export default function ComprasScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.main}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        {/* Bloco de métricas */}
         <View style={styles.metricCard}>
           <View style={styles.metricBox}>
             <Text style={styles.metricLabel}>VENDAS DO MÊS</Text>
@@ -25,7 +24,6 @@ export default function ComprasScreen({ navigation }) {
           </View>
         </View>
 
-        {/* Gráfico fictício */}
         <View style={styles.graphCard}>
           <Text style={styles.graphTitle}>Vendas da Semana</Text>
           <View style={styles.barContainer}>
@@ -43,12 +41,11 @@ export default function ComprasScreen({ navigation }) {
           </View>
         </View>
 
-        {/* Botão de navegação */}
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate('Produtos')}
         >
-          <Icon name="store" size={24} color="#fff" style={{ marginRight: 8 }} />
+          <Icon name="store" size={28} color="#fff" style={{ marginRight: 12 }} />
           <Text style={styles.buttonText}>Ver Produtos</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -56,7 +53,6 @@ export default function ComprasScreen({ navigation }) {
   );
 }
 
-// Dados de exemplo para o gráfico
 const fakeData = [
   { dia: 'Seg', valor: 3 },
   { dia: 'Ter', valor: 5 },
@@ -73,16 +69,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff5e6',
   },
   scroll: {
-    padding: 20,
+    padding: 24,
   },
   metricCard: {
     backgroundColor: '#C4624E',
-    borderRadius: 12,
+    borderRadius: 20,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: 20,
-    marginBottom: 20,
-    elevation: 4,
+    padding: 28,
+    marginBottom: 28,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
   metricBox: {
     alignItems: 'center',
@@ -90,60 +90,81 @@ const styles = StyleSheet.create({
   metricLabel: {
     fontSize: 16,
     color: '#fff',
-    fontWeight: '600',
-    marginBottom: 6,
+    fontWeight: '700',
+    marginBottom: 8,
+    letterSpacing: 1,
   },
   metricValue: {
-    fontSize: 32,
+    fontSize: 36,
     color: '#fff',
-    fontWeight: 'bold',
+    fontWeight: '800',
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   graphCard: {
     backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    elevation: 3,
-    marginBottom: 20,
+    borderRadius: 20,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
+    marginBottom: 28,
   },
   graphTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '800',
     color: '#C4624E',
-    marginBottom: 15,
+    marginBottom: 20,
     textAlign: 'center',
+    letterSpacing: 0.5,
   },
   barContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    height: 150,
+    height: 160,
+    paddingHorizontal: 8,
   },
   barItem: {
     alignItems: 'center',
-    width: 30,
+    width: 36,
   },
   bar: {
-    width: 20,
+    width: 24,
     backgroundColor: '#C4624E',
-    borderRadius: 4,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   barLabel: {
-    marginTop: 6,
-    fontSize: 12,
+    marginTop: 10,
+    fontSize: 14,
     color: '#444',
+    fontWeight: '600',
   },
   button: {
     backgroundColor: '#964534',
-    paddingVertical: 15,
-    borderRadius: 10,
+    paddingVertical: 18,
+    borderRadius: 16,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 8,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
 });

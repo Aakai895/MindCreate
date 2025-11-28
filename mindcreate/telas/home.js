@@ -49,7 +49,9 @@ export default function Telainicial({ navigation }) {
             showsHorizontalScrollIndicator={false}
             renderItem={({ item }) => (
               <View style={styles.card}>
-                <Image style={styles.image} source={{ uri: item.image }} />
+                <View style={styles.imageContainer}>
+                  <Image style={styles.image} source={{ uri: item.image }} />
+                </View>
                 <Text style={styles.title}>{item.title}</Text>
               </View>
             )}
@@ -64,75 +66,100 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: '#fff5e6',
-    padding: 16,
+    padding: 20,
   },
   container: {
     flex: 1,
   },
   text: {
-    color: '#000',
-    fontSize: 32,
-    fontWeight: '700',
+    color: '#8B0000',
+    fontSize: 36,
+    fontWeight: '800',
     textAlign: 'center',
-    marginBottom: 15,
+    marginBottom: 25,
+    textShadowColor: 'rgba(139, 0, 0, 0.1)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
   },
   text2: {
-    color: '#000',
-    fontSize: 22,
-    fontWeight: '600',
+    color: '#8B0000',
+    fontSize: 24,
+    fontWeight: '700',
     textAlign: 'center',
-    marginBottom: 6,
+    marginBottom: 8,
   },
   subtitle: {
-    color: '#4a4a4a',
-    fontSize: 14,
+    color: '#8B0000',
+    fontSize: 16,
     fontStyle: 'italic',
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: 20,
+    opacity: 0.8,
   },
   text3: {
     color: '#fff',
     fontSize: 18,
     fontWeight: '600',
-    paddingVertical: 8,
-    paddingHorizontal: 24,
-    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 25,
     backgroundColor: '#8B0000',
     overflow: 'hidden',
     alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
   },
   cardinicial: {
-    marginBottom: 30,
+    marginBottom: 40,
+    paddingVertical: 20,
   },
   card2: {
-    paddingVertical: 10,
+    paddingVertical: 15,
   },
   projeto: {
     alignItems: 'center',
   },
   badge: {
-    marginTop: 8,
+    marginTop: 15,
   },
   card: {
     flexDirection: 'row',
     backgroundColor: '#8B0000',
-    borderRadius: 12,
-    padding: 12,
+    borderRadius: 16,
+    padding: 16,
     alignItems: 'center',
-    marginRight: 15,
-    width: 320,
+    marginRight: 18,
+    width: 340,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  imageContainer: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    elevation: 4,
   },
   image: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    marginRight: 14,
+    width: 85,
+    height: 85,
+    borderRadius: 12,
+    marginRight: 16,
     resizeMode: 'cover',
+    borderWidth: 2,
+    borderColor: '#fff',
   },
   title: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
     flexShrink: 1,
+    lineHeight: 22,
   },
 });

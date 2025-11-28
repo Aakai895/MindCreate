@@ -162,8 +162,8 @@ export default function Projeto({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.cart} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={30} color="#C14D34" />
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={28} color="#8B0000" />
         </TouchableOpacity>
       </View>
 
@@ -176,7 +176,8 @@ export default function Projeto({ route, navigation }) {
           <Image style={styles.image} source={{ uri: image }} />
         ) : (
           <View style={styles.imagePlaceholder}>
-            <Text>Toque para adicionar imagem</Text>
+            <Ionicons name="camera" size={50} color="#8B0000" />
+            <Text style={styles.placeholderText}>Toque para adicionar imagem</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -227,13 +228,14 @@ export default function Projeto({ route, navigation }) {
           value={notes}
           onChangeText={setNotes}
           placeholder="Digite suas anotações aqui..."
-          placeholderTextColor="#999"
+          placeholderTextColor="#8B0000"
           textAlignVertical="top"
         />
       </View>
 
       <TouchableOpacity style={styles.button} onPress={finalizarProjeto} activeOpacity={0.8}>
         <Text style={styles.buttonText}>Finalizar Projeto</Text>
+        <Ionicons name="checkmark-circle" size={24} color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -251,34 +253,59 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  backButton: {
+    padding: 12,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
   tit: {
-    marginBottom: 15,
+    marginBottom: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '800',
     color: '#8B0000',
+    textAlign: 'center',
+    letterSpacing: 0.5,
+    textShadowColor: 'rgba(139, 0, 0, 0.2)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
   },
   image: {
     width: '100%',
-    height: 220,
-    borderRadius: 5,
+    height: 240,
+    borderRadius: 20,
     marginBottom: 25,
-    backgroundColor: '#ddd',
+    borderWidth: 3,
+    borderColor: '#8B0000',
   },
   imagePlaceholder: {
     width: '100%',
-    height: 220,
-    borderRadius: 15,
-    marginBottom: 20,
+    height: 240,
+    borderRadius: 20,
+    marginBottom: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ddd',
+    backgroundColor: '#fff',
+    borderWidth: 3,
+    borderColor: '#8B0000',
+    borderStyle: 'dashed',
+  },
+  placeholderText: {
+    marginTop: 12,
+    color: '#8B0000',
+    fontSize: 16,
+    fontWeight: '600',
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 25,
+    marginBottom: 30,
   },
   careerContainer: {
     alignItems: 'center',
@@ -286,16 +313,21 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   careerBox: {
-    marginTop: 10,
+    marginTop: 12,
     backgroundColor: '#8B0000',
-    width: 80,
-    height: 80,
+    width: 90,
+    height: 90,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   careerNumber: {
-    fontSize: 36,
+    fontSize: 40,
     color: '#fff',
     fontWeight: '900',
   },
@@ -304,62 +336,88 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '800',
     color: '#8B0000',
+    letterSpacing: 0.5,
   },
   timeBox: {
-    marginTop: 10,
+    marginTop: 12,
     backgroundColor: '#fff',
     width: '100%',
-    paddingVertical: 15,
-    borderRadius: 15,
+    paddingVertical: 18,
+    borderRadius: 16,
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#8B0000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   time: {
-    fontSize: 26,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontWeight: '800',
     color: '#8B0000',
     fontVariant: ['tabular-nums'],
   },
   playerButtons: {
     flexDirection: 'row',
-    marginTop: 15,
+    marginTop: 16,
   },
   playerButton: {
     backgroundColor: '#8B0000',
-    width: 52,
-    height: 52,
-    borderRadius: 14,
-    marginHorizontal: 8,
+    width: 60,
+    height: 60,
+    borderRadius: 16,
+    marginHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 6,
   },
   stopButton: {
     backgroundColor: '#B22222',
   },
   notesContainer: {
-    marginBottom: 25,
+    marginBottom: 30,
   },
   notesInput: {
-    marginTop: 10,
+    marginTop: 12,
     backgroundColor: '#fff',
-    borderRadius: 15,
-    padding: 15,
-    minHeight: 120,
+    borderRadius: 16,
+    padding: 18,
+    minHeight: 140,
     fontSize: 16,
-    color: '#333',
+    color: '#8B0000',
+    fontWeight: '600',
+    borderWidth: 2,
+    borderColor: '#8B0000',
+    textAlignVertical: 'top',
   },
   button: {
     backgroundColor: '#8B0000',
-    paddingVertical: 16,
-    borderRadius: 15,
-    marginBottom: 25,
+    paddingVertical: 20,
+    borderRadius: 16,
+    marginBottom: 30,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   buttonText: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '800',
+    marginRight: 12,
+    letterSpacing: 0.5,
   },
 });

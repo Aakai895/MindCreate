@@ -6,7 +6,6 @@ export default function ProdutosScreen({ navigation }) {
 
   const [activeTab, setActiveTab] = useState("ATIVOS");
 
-
   const produtosAtivos = [
     {
       id: "1",
@@ -23,12 +22,10 @@ export default function ProdutosScreen({ navigation }) {
     },
   ];
 
-
   const data = activeTab === "ATIVOS" ? produtosAtivos : produtosRevisando;
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
-
       <View style={styles.imagePlaceholder} />
       
       <View style={styles.info}>
@@ -37,11 +34,11 @@ export default function ProdutosScreen({ navigation }) {
       </View>
 
       <View style={styles.actions}>
-        <TouchableOpacity>
-          <Ionicons name="trash-outline" size={22} color="#333" />
+        <TouchableOpacity style={styles.actionBtn}>
+          <Ionicons name="trash-outline" size={20} color="#fff" />
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="pencil-outline" size={22} color="#333" />
+        <TouchableOpacity style={styles.actionBtn}>
+          <Ionicons name="pencil-outline" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
     </View>
@@ -49,15 +46,20 @@ export default function ProdutosScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Tabs */}
       <View style={styles.tabs}>
-        <TouchableOpacity onPress={() => setActiveTab("ATIVOS")}>
+        <TouchableOpacity 
+          style={[styles.tabButton, activeTab === "ATIVOS" && styles.activeTabButton]}
+          onPress={() => setActiveTab("ATIVOS")}
+        >
           <Text style={[styles.tab, activeTab === "ATIVOS" && styles.activeTab]}>
             ATIVOS
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => setActiveTab("REVISANDO")}>
+        <TouchableOpacity 
+          style={[styles.tabButton, activeTab === "REVISANDO" && styles.activeTabButton]}
+          onPress={() => setActiveTab("REVISANDO")}
+        >
           <Text style={[styles.tab, activeTab === "REVISANDO" && styles.activeTab]}>
             REVISANDO
           </Text>
@@ -68,74 +70,121 @@ export default function ProdutosScreen({ navigation }) {
         data={data}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        contentContainerStyle={{ padding: 10 }}
+        contentContainerStyle={styles.listContent}
       />
 
       <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CriarProd')}>
         <Ionicons name="add" size={28} color="#fff" />
       </TouchableOpacity>
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fdf5ed" },
-
+  container: { 
+    flex: 1, 
+    backgroundColor: "#fff5e6" 
+  },
   tabs: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderColor: "#ddd",
+    paddingVertical: 16,
+    backgroundColor: "#fff",
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  tabButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    borderRadius: 20,
+  },
+  activeTabButton: {
+    backgroundColor: "#8B0000",
   },
   tab: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#a89c92", 
+    fontWeight: "700",
+    color: "#8B0000",
+    letterSpacing: 0.5,
   },
   activeTab: {
-    color: "#c14b3b", 
-    borderBottomWidth: 2,
-    borderColor: "#c14b3b",
-    paddingBottom: 4,
+    color: "#fff",
   },
-
+  listContent: { 
+    padding: 20,
+    paddingBottom: 80,
+  },
   card: {
     flexDirection: "row",
     backgroundColor: "#fff",
-    padding: 10,
-    borderRadius: 10,
-    marginBottom: 10,
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 16,
     alignItems: "center",
-    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: "#8B0000",
   },
   imagePlaceholder: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    backgroundColor: "#eee",
-    marginRight: 10,
+    width: 70,
+    height: 70,
+    borderRadius: 12,
+    backgroundColor: "#8B0000",
+    marginRight: 16,
   },
-  info: { flex: 1 },
-  title: { fontSize: 14, fontWeight: "600", marginBottom: 5 },
-  price: { fontSize: 13, color: "#666" },
+  info: { 
+    flex: 1,
+  },
+  title: { 
+    fontSize: 16, 
+    fontWeight: "700", 
+    marginBottom: 6,
+    color: "#8B0000",
+    lineHeight: 20,
+  },
+  price: { 
+    fontSize: 18, 
+    fontWeight: "800", 
+    color: "#8B0000",
+  },
   actions: {
     flexDirection: "row",
-    gap: 10,
+    gap: 8,
   },
-
+  actionBtn: {
+    backgroundColor: "#8B0000",
+    padding: 10,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
+  },
   fab: {
     position: "absolute",
-    bottom: 50,
-    right: 20,
-    backgroundColor: "#c14b3b",
-    width: 55,
-    height: 55,
+    bottom: 30,
+    right: 30,
+    backgroundColor: "#8B0000",
+    width: 60,
+    height: 60,
     borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
-    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
-
 });

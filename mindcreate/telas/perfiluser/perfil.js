@@ -227,6 +227,7 @@ const renderGrid = () => (
     }
   />
 );
+
   const renderStore = () => (
     <FlatList
       data={storeItems}
@@ -243,7 +244,6 @@ const renderGrid = () => (
       contentContainerStyle={{ paddingBottom: 70 }}
     />
   );
-
 
 const getProfileImageUrl = () => {
   const user = isOwnProfile ? usuario : viewedUser;
@@ -263,12 +263,11 @@ const getProfileImageUrl = () => {
          user.profileImage || user.photoURL || 'https://via.placeholder.com/100';
 };
 
-
   // ⏳ Estados de carregamento
   if (!isUserReady) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#a33" />
+        <ActivityIndicator size="large" color="#8B0000" />
         <Text style={styles.loadingText}>Carregando...</Text>
       </View>
     );
@@ -277,7 +276,7 @@ const getProfileImageUrl = () => {
   if (!usuario) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#a33" />
+        <ActivityIndicator size="large" color="#8B0000" />
         <Text style={styles.loadingText}>Usuário não autenticado</Text>
         <TouchableOpacity 
           style={styles.editButton}
@@ -292,12 +291,11 @@ const getProfileImageUrl = () => {
   if (!viewedUserId || loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#a33" />
+        <ActivityIndicator size="large" color="#8B0000" />
         <Text style={styles.loadingText}>Carregando perfil...</Text>
       </View>
     );
   }
-
 
   return (
     <View style={styles.container}>
@@ -341,17 +339,17 @@ const getProfileImageUrl = () => {
       {/* Seguidores */}
       <View style={styles.followContainer}>
         <View style={styles.followBox}>
-          <Ionicons name="person" size={18} color="#000" />
+          <Ionicons name="person" size={18} color="#8B0000" />
           <Text style={styles.followCount}>{isOwnProfile ? '1' : viewedUser?.followersCount || '0'}</Text>
           <Text style={styles.followLabel}>Seguidores</Text>
         </View>
         <View style={styles.followBox}>
-          <Ionicons name="heart" size={18} color="#000" />
+          <Ionicons name="heart" size={18} color="#8B0000" />
           <Text style={styles.followCount}>{isOwnProfile ? '1' : viewedUser?.followingCount || '0'}</Text>
           <Text style={styles.followLabel}>Seguindo</Text>
         </View>
         <View style={styles.followBox}>
-          <Ionicons name="images" size={18} color="#000" />
+          <Ionicons name="images" size={18} color="#8B0000" />
           <Text style={styles.followCount}>{posts.length}</Text>
           <Text style={styles.followLabel}>Publicações</Text>
         </View>
@@ -366,7 +364,7 @@ const getProfileImageUrl = () => {
           <Ionicons
             name="grid-outline"
             size={28}
-            color={activeTab === 0 ? '#a33' : '#555'}
+            color={activeTab === 0 ? '#8B0000' : '#555'}
           />
           <Text style={[styles.tabText, activeTab === 0 && styles.tabTextActive]}>
             Publicações
@@ -379,7 +377,7 @@ const getProfileImageUrl = () => {
           <Ionicons
             name="cart"
             size={28}
-            color={activeTab === 1 ? '#a33' : '#555'}
+            color={activeTab === 1 ? '#8B0000' : '#555'}
           />
           <Text style={[styles.tabText, activeTab === 1 && styles.tabTextActive]}>
             Loja
@@ -439,7 +437,7 @@ const getProfileImageUrl = () => {
                   disabled={uploading || !postData.image}
                 >
                   {uploading ? (
-                    <ActivityIndicator size="small" color="#a33" />
+                    <ActivityIndicator size="small" color="#8B0000" />
                   ) : (
                     <Text style={[styles.shareButtonText, !postData.image && styles.disabledButton]}>
                       Publicar
@@ -457,7 +455,7 @@ const getProfileImageUrl = () => {
                 >
                   {compressing ? (
                     <View style={styles.compressingContainer}>
-                      <ActivityIndicator size="large" color="#a33" />
+                      <ActivityIndicator size="large" color="#8B0000" />
                       <Text style={styles.compressingText}>Comprimindo imagem...</Text>
                     </View>
                   ) : postData.image ? (
@@ -536,7 +534,7 @@ const getProfileImageUrl = () => {
 
                 {/* Dica de compressão */}
                 <View style={styles.tipContainer}>
-                  <Ionicons name="information-circle" size={20} color="#a33" />
+                  <Ionicons name="information-circle" size={20} color="#8B0000" />
                   <Text style={styles.tipText}>
                     Suas imagens são comprimidas automaticamente para economizar espaço!
                   </Text>
@@ -571,88 +569,116 @@ const styles = StyleSheet.create({
   // ==================== CONTAINER PRINCIPAL ====================
   container: { 
     flex: 1, 
-    backgroundColor: '#f5e8da' 
+    backgroundColor: '#fff5e6' 
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5e8da',
+    backgroundColor: '#fff5e6',
   },
   loadingText: {
     marginTop: 10,
-    color: '#666',
+    color: '#8B0000',
+    fontWeight: '600',
   },
   profileContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 15,
-    backgroundColor: '#f5e8da',
+    padding: 20,
+    backgroundColor: '#fff5e6',
   },
   profilePic: { 
     width: 100, 
     height: 100, 
-    borderRadius: 100 
+    borderRadius: 50,
+    borderWidth: 3,
+    borderColor: '#8B0000',
   },
   profileName: { 
-    fontWeight: 'bold', 
-    fontSize: 16 
+    fontWeight: '800', 
+    fontSize: 18,
+    color: '#8B0000',
+    marginBottom: 4,
   },
   profileUser: { 
-    color: '#555' 
+    color: '#8B0000',
+    fontWeight: '600',
+    marginBottom: 6,
   },
   profileBio: { 
-    color: '#666', 
-    marginTop: 4 
+    color: '#8B0000', 
+    fontSize: 14,
+    fontWeight: '500',
   },
   editButton: {
-    backgroundColor: '#a33',
-    padding: 8,
-    borderRadius: 20,
+    backgroundColor: '#8B0000',
+    padding: 12,
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   followButton: {
-    backgroundColor: '#a33',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 20,
+    backgroundColor: '#8B0000',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   followButtonText: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontWeight: '800',
+    fontSize: 14,
   },
 
   // ==================== SEÇÃO DE SEGUIDORES ====================
   followContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 10,
+    paddingVertical: 20,
+    backgroundColor: '#fff',
+    marginHorizontal: 20,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   followBox: { 
     alignItems: 'center' 
   },
   followCount: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginTop: 2,
+    fontWeight: '800',
+    fontSize: 18,
+    marginTop: 4,
+    color: '#8B0000',
   },
   followLabel: {
     fontSize: 12,
-    color: '#666',
+    color: '#8B0000',
+    fontWeight: '600',
   },
 
-  // ==================== SEÇÃO DE GRID DE POSTS CORRIGIDA ====================
-   gridContainer: {
+  // ==================== SEÇÃO DE GRID DE POSTS ====================
+  gridContainer: {
     flexGrow: 1,
   },
   gridItem: {
-    width: (width - 2) / 3, // Largura exata para 3 colunas
-    height: (width - 2) / 3, // Altura igual à largura (quadrado)
-    margin: 0.5, // Margem mínima
+    width: (width - 2) / 3,
+    height: (width - 2) / 3,
+    margin: 0.5,
   },
   gridImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 1,
   },
   emptyContainer: {
     flex: 1,
@@ -661,16 +687,18 @@ const styles = StyleSheet.create({
     paddingVertical: 50,
   },
   emptyText: {
-    color: '#666',
+    color: '#8B0000',
     fontSize: 16,
     textAlign: 'center',
     marginTop: 10,
+    fontWeight: '600',
   },
   emptySubtext: {
-    color: '#a33',
+    color: '#8B0000',
     fontSize: 14,
     textAlign: 'center',
     marginTop: 5,
+    fontWeight: '500',
   },
 
   // ==================== SEÇÃO DA LOJA ====================
@@ -678,47 +706,57 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#fff',
     margin: 8,
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#a33',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: '#8B0000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   listImage: { 
     width: 160, 
     height: 160, 
-    borderRadius: 8 
+    borderRadius: 12 
   },
   listTitle: { 
-    fontSize: 14, 
-    fontWeight: 'bold' 
+    fontSize: 16, 
+    fontWeight: '800',
+    color: '#8B0000',
+    marginBottom: 4,
   },
   listPrice: { 
-    color: '#333', 
-    marginTop: 5 
+    color: '#8B0000', 
+    fontWeight: '700',
+    fontSize: 18,
   },
 
   // ==================== NAVEGAÇÃO INFERIOR ====================
   bottomNav: {
-    height: 70,
+    height: 80,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
-    backgroundColor: '#f5e8da',
+    borderTopWidth: 2,
+    borderTopColor: '#8B0000',
+    backgroundColor: '#fff',
   },
   tabButton: {
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 8,
   },
   tabText: {
-    fontSize: 12,
-    color: '#555',
+    fontSize: 14,
+    color: '#8B0000',
     marginTop: 4,
+    fontWeight: '600',
   },
   tabTextActive: {
-    color: '#a33',
-    fontWeight: 'bold',
+    color: '#8B0000',
+    fontWeight: '800',
   },
 
   // ==================== BOTÃO CRIAR POST ====================
@@ -729,14 +767,14 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#a33',
+    backgroundColor: '#8B0000',
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
 
   // ==================== MODAL CRIAR POST ====================
@@ -755,41 +793,43 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    padding: 20,
+    borderBottomWidth: 2,
+    borderBottomColor: '#8B0000',
   },
   modalCloseButton: {
     padding: 4,
   },
   modalTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#8B0000',
   },
   modalShareButton: {
     padding: 4,
   },
   shareButtonText: {
-    color: '#a33',
-    fontWeight: 'bold',
+    color: '#8B0000',
+    fontWeight: '800',
+    fontSize: 16,
   },
   disabledButton: {
     color: '#ccc',
   },
   modalBody: {
     flex: 1,
-    padding: 16,
+    padding: 20,
   },
 
   // ==================== UPLOAD DE IMAGEM NO MODAL ====================
   imageUpload: {
     height: 220,
     borderWidth: 2,
-    borderColor: '#eee',
+    borderColor: '#8B0000',
     borderStyle: 'dashed',
-    borderRadius: 10,
+    borderRadius: 16,
     marginBottom: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff5e6',
     overflow: 'hidden',
   },
   compressingContainer: {
@@ -799,7 +839,8 @@ const styles = StyleSheet.create({
   },
   compressingText: {
     marginTop: 10,
-    color: '#666',
+    color: '#8B0000',
+    fontWeight: '600',
   },
   selectedImageContainer: {
     flex: 1,
@@ -816,12 +857,13 @@ const styles = StyleSheet.create({
   },
   imageSize: {
     fontSize: 14,
-    color: '#666',
-    fontWeight: 'bold',
+    color: '#8B0000',
+    fontWeight: '700',
   },
   imageQuality: {
     fontSize: 12,
     marginTop: 2,
+    fontWeight: '600',
   },
   qualityGood: {
     color: '#4CAF50',
@@ -839,13 +881,15 @@ const styles = StyleSheet.create({
   },
   uploadText: {
     marginTop: 10,
-    color: '#666',
+    color: '#8B0000',
     fontSize: 16,
+    fontWeight: '700',
   },
   uploadHint: {
     marginTop: 5,
-    color: '#999',
+    color: '#8B0000',
     fontSize: 12,
+    fontWeight: '500',
   },
 
   // ==================== FORMULÁRIO NO MODAL ====================
@@ -853,17 +897,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   inputLabel: {
-    fontWeight: 'bold',
+    fontWeight: '800',
     marginBottom: 8,
-    color: '#333',
+    color: '#8B0000',
+    fontSize: 16,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
+    borderWidth: 2,
+    borderColor: '#8B0000',
+    borderRadius: 12,
+    padding: 16,
     fontSize: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff5e6',
+    color: '#8B0000',
+    fontWeight: '600',
   },
   textArea: {
     height: 100,
@@ -871,26 +918,28 @@ const styles = StyleSheet.create({
   },
   charCount: {
     fontSize: 12,
-    color: '#666',
+    color: '#8B0000',
     textAlign: 'right',
     marginTop: 4,
+    fontWeight: '600',
   },
 
   // ==================== DICAS E INFORMAÇÕES ====================
   tipContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff9f9',
-    padding: 12,
-    borderRadius: 8,
+    backgroundColor: '#fff5e6',
+    padding: 16,
+    borderRadius: 12,
     borderLeftWidth: 4,
-    borderLeftColor: '#a33',
+    borderLeftColor: '#8B0000',
     marginTop: 10,
   },
   tipText: {
-    fontSize: 12,
-    color: '#666',
+    fontSize: 14,
+    color: '#8B0000',
     marginLeft: 8,
     flex: 1,
+    fontWeight: '600',
   },
 });

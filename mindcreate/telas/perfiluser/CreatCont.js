@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { registerUser } from "../../firebase/authfirebase";
+import { Ionicons } from '@expo/vector-icons';
 
 const CadastroScreen = () => {
   const [nome, setNome] = useState('');
@@ -9,22 +10,19 @@ const CadastroScreen = () => {
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
-  // Função para cadastro
   async function handleCadastro() {
     try {
       await registerUser(email, password, nome);
       console.log("Usuário registrado!");
-      navigation.navigate("Login"); // Só será chamado se tudo deu certo
+      navigation.navigate("Login");
     } catch (error) {
       console.log("Erro ao registrar:", error.message);
-      alert("Erro ao registrar: " + error.message); // mostra na tela
+      alert("Erro ao registrar: " + error.message);
     }
   }
-  
 
-  // Função para ir para a tela de login
   const handleLoginPress = () => {
-    navigation.navigate('Login');  // Navega para tela de login
+    navigation.navigate('Login');
   };
 
   return (
@@ -32,39 +30,54 @@ const CadastroScreen = () => {
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // Ajuste para iOS
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
         <ScrollView contentContainerStyle={styles.contentContainer}>
           <Text style={styles.title}>Criar Conta</Text>
 
-          
+          <View style={styles.inputContainer}>
+            <Ionicons name="person-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Nome"
+              placeholderTextColor="#8B0000"
+              value={nome}
+              onChangeText={setNome}
+            />
+          </View>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Nome"
-            value={nome}
-            onChangeText={setNome}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Senha"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+          <View style={styles.inputContainer}>
+            <Ionicons name="mail-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="#8B0000"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Ionicons name="lock-closed-outline" size={20} color="#8B0000" style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Senha"
+              placeholderTextColor="#8B0000"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+          </View>
+
           <TouchableOpacity style={styles.loginButton} onPress={handleLoginPress}>
             <Text style={styles.loginButtonText}>Já possui uma conta? Log in aqui.</Text>
           </TouchableOpacity>
+
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={handleCadastro}>
               <Text style={styles.buttonText}>Cadastrar</Text>
+              <Ionicons name="arrow-forward" size={20} color="#fff" />
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -88,42 +101,79 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   title: {
-    fontSize: 40,
-    fontWeight: 'bold',
+    fontSize: 36,
+    fontWeight: '800',
     color: '#8B0000',
-    marginBottom: 20,
+    marginBottom: 40,
     marginTop: 50,
+    letterSpacing: 1,
+    textShadowColor: 'rgba(139, 0, 0, 0.2)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    marginTop: 16,
+    borderWidth: 2,
+    borderColor: '#8B0000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  inputIcon: {
+    marginRight: 12,
   },
   input: {
-    width: '100%',
-    backgroundColor: 'rgba(132, 0, 0, 0.3)',
-    borderRadius: 8,
-    padding: 20,
-    marginTop: 20,
-    fontSize: 15,
+    flex: 1,
+    paddingVertical: 18,
+    fontSize: 16,
+    color: '#8B0000',
+    fontWeight: '600',
   },
   buttonContainer: {
     flex: 1,
     justifyContent: 'flex-end',
     width: '100%',
+    marginTop: 20,
   },
   button: {
     width: '100%',
-    backgroundColor: '#000',
-    borderRadius: 8,
-    padding: 15,
+    backgroundColor: '#8B0000',
+    borderRadius: 16,
+    padding: 20,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   buttonText: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontWeight: '800',
+    fontSize: 18,
+    marginRight: 8,
+    letterSpacing: 0.5,
   },
   loginButton: {
     backgroundColor: 'transparent',
+    marginTop: 20,
+    padding: 12,
   },
   loginButtonText: {
-    color: '#000',
-    paddingBottom: 20,
+    color: '#8B0000',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
 
