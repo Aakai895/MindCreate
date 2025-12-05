@@ -4,7 +4,7 @@ import {
   Dimensions, Modal, TextInput, ScrollView, Alert, ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useApp } from '../../context/authcontext'; 
+import { useApp } from '../../context/AuthContext';
 import { 
   savePostToFirestore, 
   getPostsByUsuario, 
@@ -199,7 +199,7 @@ const renderGrid = () => (
     renderItem={({ item }) => (
       <View style={styles.gridItem}>
         <TouchableOpacity 
-          onPress={() => console.log('Abrir post:', item.id)}
+          onPress={() => navigation.navigate('PostDetail', { postId: item.id })}
           activeOpacity={0.7}
         >
           <Image 
@@ -643,14 +643,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingVertical: 20,
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
     marginHorizontal: 20,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   followBox: { 
     alignItems: 'center' 
@@ -707,24 +701,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     margin: 8,
     padding: 16,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: '#8B0000',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   listImage: { 
     width: 160, 
-    height: 160, 
-    borderRadius: 12 
+    height: 160,
   },
   listTitle: { 
     fontSize: 16, 
-    fontWeight: '800',
-    color: '#8B0000',
+    fontWeight: '700',
+    color: '#333333',
     marginBottom: 4,
   },
   listPrice: { 
@@ -735,13 +722,13 @@ const styles = StyleSheet.create({
 
   // ==================== NAVEGAÇÃO INFERIOR ====================
   bottomNav: {
-    height: 80,
+    height: 60,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    borderTopWidth: 2,
-    borderTopColor: '#8B0000',
-    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+    backgroundColor: '#fff5e6',
   },
   tabButton: {
     alignItems: 'center',
@@ -749,7 +736,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   tabText: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#8B0000',
     marginTop: 4,
     fontWeight: '600',
@@ -764,17 +751,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 50,
+    height: 50,
     backgroundColor: '#8B0000',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    borderWidth: 0,
   },
 
   // ==================== MODAL CRIAR POST ====================
@@ -785,51 +767,47 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
     height: '85%',
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 2,
-    borderBottomColor: '#8B0000',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
   },
   modalCloseButton: {
     padding: 4,
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#8B0000',
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#333333',
   },
   modalShareButton: {
     padding: 4,
   },
   shareButtonText: {
     color: '#8B0000',
-    fontWeight: '800',
-    fontSize: 16,
+    fontWeight: '700',
+    fontSize: 14,
   },
   disabledButton: {
     color: '#ccc',
   },
   modalBody: {
     flex: 1,
-    padding: 20,
+    padding: 16,
   },
 
   // ==================== UPLOAD DE IMAGEM NO MODAL ====================
   imageUpload: {
-    height: 220,
-    borderWidth: 2,
-    borderColor: '#8B0000',
-    borderStyle: 'dashed',
-    borderRadius: 16,
-    marginBottom: 20,
-    backgroundColor: '#fff5e6',
+    height: 200,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    marginBottom: 16,
+    backgroundColor: '#F8F8F8',
     overflow: 'hidden',
   },
   compressingContainer: {
@@ -853,15 +831,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 10,
+    padding: 8,
   },
   imageSize: {
-    fontSize: 14,
-    color: '#8B0000',
-    fontWeight: '700',
+    fontSize: 13,
+    color: '#666666',
+    fontWeight: '600',
   },
   imageQuality: {
-    fontSize: 12,
+    fontSize: 11,
     marginTop: 2,
     fontWeight: '600',
   },
@@ -881,65 +859,63 @@ const styles = StyleSheet.create({
   },
   uploadText: {
     marginTop: 10,
-    color: '#8B0000',
-    fontSize: 16,
-    fontWeight: '700',
+    color: '#666666',
+    fontSize: 14,
+    fontWeight: '600',
   },
   uploadHint: {
     marginTop: 5,
     color: '#8B0000',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '500',
   },
 
   // ==================== FORMULÁRIO NO MODAL ====================
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   inputLabel: {
-    fontWeight: '800',
-    marginBottom: 8,
-    color: '#8B0000',
-    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 6,
+    color: '#333333',
+    fontSize: 14,
   },
   input: {
-    borderWidth: 2,
-    borderColor: '#8B0000',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    backgroundColor: '#fff5e6',
-    color: '#8B0000',
-    fontWeight: '600',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    padding: 12,
+    fontSize: 14,
+    backgroundColor: '#FFFFFF',
+    color: '#333333',
+    fontWeight: '500',
   },
   textArea: {
-    height: 100,
+    height: 80,
     textAlignVertical: 'top',
   },
   charCount: {
-    fontSize: 12,
-    color: '#8B0000',
+    fontSize: 11,
+    color: '#666666',
     textAlign: 'right',
     marginTop: 4,
-    fontWeight: '600',
+    fontWeight: '500',
   },
 
   // ==================== DICAS E INFORMAÇÕES ====================
   tipContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff5e6',
-    padding: 16,
-    borderRadius: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: '#8B0000',
+    backgroundColor: '#FFFFFF',
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
     marginTop: 10,
   },
   tipText: {
-    fontSize: 14,
-    color: '#8B0000',
+    fontSize: 12,
+    color: '#666666',
     marginLeft: 8,
     flex: 1,
-    fontWeight: '600',
+    fontWeight: '500',
   },
 });

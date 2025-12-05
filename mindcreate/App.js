@@ -13,7 +13,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './telas/perfiluser/login';
 import Cad from './telas/perfiluser/CreatCont';
 import Rotas from './telas/rotas';
-import { AppProvider, useApp } from './context/authcontext';
+import { AppProvider, useApp } from './context/AuthContext';
 
 const Stack = createNativeStackNavigator();
 

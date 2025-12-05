@@ -29,13 +29,16 @@ import Deb from './compra/addDebito';
 import Pix from './compra/pixCod';
 import Precif from './projetos/precificar';
 import config from './perfiluser/config';
+import PostDetailScreen from './perfiluser/post';
+import ProjetoDesenhoScreen from './projetos/projetoD';
+
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 
 function TabNavigator() {
   return (
     <Tab.Navigator
-      initialRouteName="telainicial"
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         tabBarStyle: { backgroundColor: '#8B0000' },
@@ -56,7 +59,7 @@ function TabNavigator() {
         }}
       />
       <Tab.Screen
-        name="telainicial"
+        name="Home"
         component={Telainicial}
         options={{
           tabBarLabel: '',
@@ -88,7 +91,7 @@ function TabNavigator() {
 export default function Rotas() {
   return (
     <Drawer.Navigator
-      initialRouteName="telainicial"
+      initialRouteName="Home"
       screenOptions={{
         drawerStyle: { backgroundColor: '#8B0000', width: 240 },
         drawerActiveTintColor: '#000000',
@@ -100,7 +103,7 @@ export default function Rotas() {
         headerTitleStyle: { fontSize: 20, fontWeight: 'bold' },
       }}>
       <Drawer.Screen
-        name="telainicial"
+        name="Home"
         component={TabNavigator}
         options={{
           drawerIcon: ({ color, size }) => (
@@ -120,6 +123,14 @@ export default function Rotas() {
       <Drawer.Screen
         name="edit"
         component={EditPerfil}
+        options={{
+          drawerItemStyle: { display: 'none' },
+          headerShown: false,
+        }}
+      />
+       <Drawer.Screen
+        name="PostDetail"
+        component={PostDetailScreen}
         options={{
           drawerItemStyle: { display: 'none' },
           headerShown: false,
@@ -165,6 +176,14 @@ export default function Rotas() {
       <Drawer.Screen
         name="Projeto"
         component={ProjetoScreen}
+        options={{
+          drawerItemStyle: { display: 'none' },
+          headerShown: false,
+        }}
+      />
+      <Drawer.Screen
+        name="ProjetoD"
+        component={ProjetoDesenhoScreen}
         options={{
           drawerItemStyle: { display: 'none' },
           headerShown: false,
@@ -277,7 +296,7 @@ export default function Rotas() {
         }}
       />
       <Drawer.Screen
-        name="Configuracao"
+        name="Configuração"
         component={config}
         options={{
           drawerIcon: ({ color, size }) => (
